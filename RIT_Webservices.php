@@ -3,7 +3,6 @@
 
   Example usage:
 
-  require 'CURL_SoapClient.php';
   require 'RIT_Webservices.php';
 
   $webservice = new RIT_Webservices('login', 'password', 'certificate.pem', 'test');
@@ -14,8 +13,8 @@
 class RIT_Webservices
 {
 	protected $user;
-	protected $curl;
   protected $instance;
+  protected $soap_options;
 
   public $instances = array(
     'production'  => 'https://intrit.poland.travel/rit/integration/',
@@ -31,27 +30,18 @@ class RIT_Webservices
 			throw new Exception("Certificate file '$cert' not found!");
 		}
 
-		$this->curl = curl_init();
+    ini_set("default_socket_timeout", 900); //< TO DO: change to stream context setting
 
-		if ($this->curl === false) {
-			throw new Exception("Couln't initialize cURL!");
-		}
-
-		curl_setopt_array($this->curl, array(
-      CURLOPT_RETURNTRANSFER	=> false,
-      CURLOPT_FOLLOWLOCATION	=> true,
-      CURLOPT_SSL_VERIFYHOST	=> false,
-      CURLOPT_SSL_VERIFYPEER	=> false,
-      CURLOPT_USERAGENT		    => 'RIT_Webservices_PHP',
-      CURLOPT_TIMEOUT			    => 1800,
-      CURLOPT_SSLCERT			    => $cert,
-      CURLOPT_SSLCERTPASSWD	  => $pass,
-    ));
-	}
-
-	public function __destruct()
-  {
-		curl_close($this->curl);
+    $this->soap_options = array(
+      'soap_version' 	=> SOAP_1_1,
+			'cache_wsdl' 	  => WSDL_CACHE_NONE,
+			'use' 			    => SOAP_LITERAL,
+			'style' 		    => SOAP_DOCUMENT,
+			'encoding' 		  => 'utf8',
+      'keep_alive'    => false,
+			'local_cert' 	  => $cert,
+			'passphrase' 	  => $pass,
+    );
 	}
 
   protected function get_metric()
@@ -67,20 +57,15 @@ class RIT_Webservices
   protected function get_webservice($method_name)
   {
     $url = $this->instances[$this->instance] . $method_name;
-
-    return new CURL_SoapClient($this->curl, "$url?wsdl", $url, array(
-			'soap_version' 	=> SOAP_1_1,
-			'cache_wsdl' 	  => WSDL_CACHE_NONE,  //< WSDL is cached anyway by CURL_SoapClient
-			'use' 			    => SOAP_LITERAL,
-			'style' 		    => SOAP_DOCUMENT,
-			'encoding' 		  => 'utf8',
-  	));
+    $webservice = new SoapClient("$url?wsdl", $this->soap_options);
+    $webservice->__setLocation($url);
+    return $webservice;
   }
 
 	public function get_objects($where, $remote_cache = false)
   {
     if ($remote_cache === true) {
-      throw new Exception("Metod not implemented.");
+      throw new Exception("Method not implemented.");
     }
 
     $ws	= $this->get_webservice('CollectTouristObjects');
