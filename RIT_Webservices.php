@@ -29,9 +29,10 @@ class RIT_Webservices
 			throw new Exception("Certificate file '$cert' not found!");
 		}
 
-    ini_set("default_socket_timeout", 900); //< TO DO: change to stream context setting
-
 		$stream_options = array(
+			'http' => array(
+				'timeout' => 900.0;		//< overrides default_socket_timeout
+			),
 			'ssl' => array(
 				'allow_self_signed'	=> true,
 			),
@@ -42,13 +43,12 @@ class RIT_Webservices
     $this->soap_options = array(
       'soap_version' 	 => SOAP_1_1,
 			'cache_wsdl' 	   => WSDL_CACHE_MEMORY,
-			//'use' 			     => SOAP_LITERAL,
-			//'style' 		     => SOAP_DOCUMENT,
 			'encoding' 		   => 'utf8',
       'keep_alive'     => false,
 			'local_cert' 	   => $cert,
 			'passphrase' 	   => $pass,
 			'stream_context' => $stream_context,
+			'compression'		 => SOAP_COMPRESSION_ACCEPT | SOAP_COMPRESSION_GZIP | SOAP_COMPRESSION_DEFLATE,
     );
 	}
 
