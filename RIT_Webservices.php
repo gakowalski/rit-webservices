@@ -3,10 +3,9 @@
 
   Example usage:
 
-  require 'RIT_Webservices.php';
-
-  $webservice = new RIT_Webservices('login', 'password', 'certificate.pem', 'test');
-  var_dump($webservice->get_metadata());
+    require 'RIT_Webservices.php';
+    $webservice = new RIT_Webservices('login', 'password', 'certificate.pem', 'test');
+    var_dump($webservice->get_metadata());
 
 */
 
@@ -32,15 +31,24 @@ class RIT_Webservices
 
     ini_set("default_socket_timeout", 900); //< TO DO: change to stream context setting
 
+		$stream_options = array(
+			'ssl' => array(
+				'allow_self_signed'	=> true,
+			),
+		);
+
+		$stream_context = stream_context_create($stream_options);
+
     $this->soap_options = array(
-      'soap_version' 	=> SOAP_1_1,
-			'cache_wsdl' 	  => WSDL_CACHE_NONE,
-			'use' 			    => SOAP_LITERAL,
-			'style' 		    => SOAP_DOCUMENT,
-			'encoding' 		  => 'utf8',
-      'keep_alive'    => false,
-			'local_cert' 	  => $cert,
-			'passphrase' 	  => $pass,
+      'soap_version' 	 => SOAP_1_1,
+			'cache_wsdl' 	   => WSDL_CACHE_MEMORY,
+			//'use' 			     => SOAP_LITERAL,
+			//'style' 		     => SOAP_DOCUMENT,
+			'encoding' 		   => 'utf8',
+      'keep_alive'     => false,
+			'local_cert' 	   => $cert,
+			'passphrase' 	   => $pass,
+			'stream_context' => $stream_context,
     );
 	}
 
