@@ -4,8 +4,15 @@
   Example usage:
 
     require 'RIT_Webservices.php';
+
     $webservice = new RIT_Webservices('login', 'password', 'certificate.pem', 'test');
+
     var_dump($webservice->get_metadata());
+
+		var_dump($webservice->get_objects(array(
+		  'language' => 'ru-RU',
+		  'allForDistributionChannel' => 'true',
+		)));
 
 */
 
@@ -31,7 +38,7 @@ class RIT_Webservices
 
 		$stream_options = array(
 			'http' => array(
-				'timeout' => 900.0;		//< overrides default_socket_timeout
+				'timeout' => 900.0,		//< overrides default_socket_timeout
 			),
 			'ssl' => array(
 				'allow_self_signed'	=> true,
@@ -78,7 +85,7 @@ class RIT_Webservices
 
     $ws	= $this->get_webservice('CollectTouristObjects');
 
-		$request = (object) array(
+		$request = array(
 			'metric'	=> $this->get_metric(),
 			'searchCondition'	=> $where,
 		);
