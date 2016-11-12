@@ -93,6 +93,35 @@ class RIT_Webservices
 		return $ws->searchTouristObjects($request);
 	}
 
+	public function get_all_objects($lang = 'pl-PL', $remote_cache = false) {
+		return $this->get_objects(array(
+		  'language' => $lang,
+		  'allForDistributionChannel' => 'true',
+		), $remote_cache);
+	}
+
+	public function get_objects_by_attributes($attributes) {
+		throw new Exception("Metod not implemented.");
+	}
+
+	public function get_objects_by_categories($categories) {
+		throw new Exception("Metod not implemented.");
+	}
+
+	public function get_object_by_id($rit_id, $lang = 'pl-PL') {
+		return $this->get_objects(array(
+		  'language' => $lang,
+		  'allForDistributionChannel' => 'false',
+			'objectIdentifier' => array(
+				'identifierRIT' => $rit_id,
+			),
+		), false);
+	}
+
+	public function get_objects_by_modification_date($date_from, $date_to) {
+		throw new Exception("Metod not implemented.");
+ 	}
+
 	public function add_object($object)
   {
     $ws	= $this->get_webservice('GiveTouristObjects');
@@ -117,8 +146,15 @@ class RIT_Webservices
 		throw new Exception("Metod not implemented.");
 	}
 
-	public function get_report() {
-		throw new Exception("Metod not implemented.");
+	public function get_report($transaction_id) {
+		$ws	= $this->get_webservice('GiveTouristObjects');
+
+		$request = array(
+			'metric'	=> $this->get_metric(),
+			'transactionIdentifier'	=> $transaction_id,
+		);
+
+		return $ws->getReport($request);
 	}
 
 	public function get_metadata($lang = 'pl-PL')
@@ -131,5 +167,9 @@ class RIT_Webservices
 		);
 
 		return $ws->getMetadataOfRIT($request);
+	}
+
+	public function get_file($file_id) {
+		throw new Exception("Metod not implemented.");
 	}
 }
