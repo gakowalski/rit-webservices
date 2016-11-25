@@ -27,6 +27,11 @@ class RIT_Webservices
     'test'        => 'https://intrittest.poland.travel/rit/integration/',
   );
 
+	/*
+		// Example #1:
+		$webservice = new RIT_Webservices('login', 'password', 'certificate.pem', 'test');
+		var_dump($webservice->get_metadata());
+	*/
 	public function __construct($user, $pass, $cert, $instance = 'production')
   {
 		$this->user = $user;
@@ -59,6 +64,20 @@ class RIT_Webservices
     );
 	}
 
+	/*
+		Internal function to help create metric object which should be incorporated into SOAP request.
+
+		Example usage:
+
+			$ws	= $this->get_webservice('MetadataOfRIT');
+
+			$request = array(
+				'metric'	=> $this->get_metric(),
+				'language'	=> $lang,
+			);
+
+			return $ws->getMetadataOfRIT($request);
+	*/
   protected function get_metric()
   {
     return (object) array(
@@ -69,6 +88,15 @@ class RIT_Webservices
     );
   }
 
+	/*
+		Internal function creating SoapClient object for webservice of given name.
+
+		Example:
+
+			$ws	= $this->get_webservice('MetadataOfRIT');
+			// ... creating request object ...
+			return $ws->getMetadataOfRIT($request);
+	*/
   protected function get_webservice($method_name)
   {
     $url = $this->instances[$this->instance] . $method_name;
@@ -76,6 +104,17 @@ class RIT_Webservices
     $webservice->__setLocation($url);
     return $webservice;
   }
+
+	/*
+		Example (get all objects in Russian language):
+
+		var_dump($webservice->get_objects(array(
+		  'language' => 'ru-RU',
+		  'allForDistributionChannel' => 'true',
+		)));
+
+		// $remote_cache is not implemented now
+	*/
 
 	public function get_objects($where, $remote_cache = false)
   {
@@ -92,6 +131,10 @@ class RIT_Webservices
 
 		return $ws->searchTouristObjects($request);
 	}
+
+	/*
+		Wrapper function for using get_objects() to get all objects in target language.
+	*/
 
 	public function get_all_objects($lang = 'pl-PL', $remote_cache = false) {
 		return $this->get_objects(array(
@@ -134,6 +177,39 @@ class RIT_Webservices
 		$result = $ws->addModifyObject($request);
 	}
 
+	public function encode_object_id($table_id, $table_name = null) {
+		$id = new \stdClass;
+		$id->identifierType = 'I' . ($table_name? 2 : 1);
+		$id->artificialIdentifier = $table_id;
+		if ($table_name) {
+			$id->databaseTable = $table_name;
+		}
+		return $id;
+	}
+
+	public function create_object_id($unique_string_id) {
+		$id = new \stdClass;
+		$id->identifierType = 'I3';
+		$id->concatenationOfField = $unique_string_id;
+		return $id;
+	}
+
+	public function create_tourist_object($object_id, $last_modified, $categories, $attributes, $attachments = array()) {
+		$object = new \stdClass;
+		if (is_object($object_id)) {
+			$object->touristObjectIdentifierSZ = $object_id;
+			$object->touristObjectIdentifierSZ->distributionChannel = $this->user;
+			$object->touristObjectIdentifierSZ->lastModified = $last_modified;
+		} else {
+			$object->touristObjectIdentifierRIT = new \stdClass;
+			$object->touristObjectIdentifierRIT->identifierRIT = $object_id;
+		}
+		$object->categories = (object) $categories;
+		$object->attributes = (object) $attributes;
+		$object->binaryDocuments = (object) $attachments;
+		return $object;
+	}
+
 	public function add_objects() {
 		throw new Exception("Metod not implemented.");
 	}
@@ -157,6 +233,15 @@ class RIT_Webservices
 		return $ws->getReport($request);
 	}
 
+	/*
+		Get all data from getMetadataOfRIT.
+
+		Example:
+			$webservice = new RIT_Webservices('login', 'password', 'certificate.pem', 'test');
+			$metadata = $webservice->get_metadata();
+			var_dump($metadata);
+	*/
+
 	public function get_metadata($lang = 'pl-PL')
   {
 		$ws	= $this->get_webservice('MetadataOfRIT');
@@ -167,6 +252,78 @@ class RIT_Webservices
 		);
 
 		return $ws->getMetadataOfRIT($request);
+	}
+
+	public function get_metadata_last_modification_date($lang = 'pl-PL')
+	{
+		return $this->get_metadata($lang)->lastModificationDate;
+	}
+
+	public function get_attributes($lang = 'pl-PL')
+	{
+		return $this->get_metadata($lang)->ritAttribute;
+	}
+
+	public function get_categories($lang = 'pl-PL')
+	{
+		return $this->get_metadata($lang)->ritCategory;
+	}
+
+	public function get_dictionaries($lang = 'pl-PL')
+	{
+		return $this->get_metadata($lang)->ritDictionary;
+	}
+
+	public function get_dictionary($code, $lang = 'pl-PL')
+	{
+		$dictionaries = $this->get_dictionaries();
+		foreach ($dictionaries as $dictionary) {
+			if ($dictionary->code == $code) {
+				return $dictionary;
+			}
+		}
+		return null;
+	}
+
+	public function get_dictionary_title($code, $lang = 'pl-PL')
+	{
+		$dictionary = $this->get_dictionary($code, $lang);
+		if ($dictionary) {
+			return $dictionary->name;
+		}
+		return null;
+	}
+
+	public function get_dictionary_values($code, $lang = 'pl-PL')
+	{
+		$dictionary = $this->get_dictionary($code, $lang);
+		if ($dictionary) {
+			return $dictionary->value;
+		}
+		return null;
+	}
+
+	/*
+
+	Example:
+
+		$webservice = new RIT_Webservices('login', 'password', 'certificate.pem', 'test');
+		var_dump($webservice->get_languages());
+
+	Output:
+
+		array(22) {
+			[0]=>
+			string(5) "en-GB"
+			// ...
+			[21]=>
+			string(5) "zh-CN"
+		}
+
+	*/
+	public function get_languages($lang = 'pl-PL')
+	{
+		return $this->get_dictionary_values('L001', $lang);
 	}
 
 	public function get_file($file_id) {
