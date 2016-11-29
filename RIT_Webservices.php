@@ -175,6 +175,7 @@ class RIT_Webservices
 		);
 
 		$result = $ws->addModifyObject($request);
+		return $result;
 	}
 
 	public function encode_object_id($table_id, $table_name = null) {
@@ -198,15 +199,32 @@ class RIT_Webservices
 		$object = new \stdClass;
 		if (is_object($object_id)) {
 			$object->touristObjectIdentifierSZ = $object_id;
-			$object->touristObjectIdentifierSZ->distributionChannel = $this->user;
+			$object->touristObjectIdentifierSZ->distributionChannel = new \stdClass;
+			$object->touristObjectIdentifierSZ->distributionChannel->name = $this->user;
+			$object->touristObjectIdentifierSZ->distributionChannel->code = $this->user;
 			$object->touristObjectIdentifierSZ->lastModified = $last_modified;
 		} else {
 			$object->touristObjectIdentifierRIT = new \stdClass;
 			$object->touristObjectIdentifierRIT->identifierRIT = $object_id;
 		}
-		$object->categories = (object) $categories;
-		$object->attributes = (object) $attributes;
-		$object->binaryDocuments = (object) $attachments;
+
+		$object->categories = new \stdClass;
+		$object->categories->category = array();
+		foreach ($categories as $category) {
+			$object->categories->category[] = (object) array('code' => $category);
+		}
+
+		$object->attributes = new \stdClass;
+		$object->attributes->attribute = array();
+		foreach ($attributes as $_attribute_code => $_attribute_value) {
+			$object->attributes->attribute[] = (object) array(
+				'code' => $_attribute_code,
+				'_' => array('attrVals' => array('language' => 'pl-PL', '_' => $_attribute_value)),
+			);
+		}
+		if (!empty($attachments)) {
+			$object->binaryDocuments = (object) $attachments;
+		}
 		return $object;
 	}
 
