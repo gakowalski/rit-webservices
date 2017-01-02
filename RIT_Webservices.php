@@ -294,7 +294,7 @@ class RIT_Webservices
 
 	public function get_dictionary($code, $lang = 'pl-PL')
 	{
-		$dictionaries = $this->get_dictionaries();
+		$dictionaries = $this->get_dictionaries($lang);
 		foreach ($dictionaries as $dictionary) {
 			if ($dictionary->code == $code) {
 				return $dictionary;
