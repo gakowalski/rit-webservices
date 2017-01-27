@@ -347,4 +347,18 @@ class RIT_Webservices
 	public function get_file($file_id) {
 		throw new Exception("Metod not implemented.");
 	}
+
+	public function get_events($date_from, $date_to) {
+		$ws	= $this->get_webservice('GetTouristObjectEvents');
+
+		$request = array(
+			'metric'	=> $this->get_metric(),
+			'criteria'	=> array(
+				'dateFrom' => $date_from,
+				'dateTo' => $date_to,
+			),
+		);
+
+		return $ws->getEvents($request);
+	}
 }
