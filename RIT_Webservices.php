@@ -287,6 +287,35 @@ class RIT_Webservices
 		return $this->get_metadata($lang)->ritCategory;
 	}
 
+	protected function get_category_from($_cache, $_code, $_inherit_attributes = true, $_lang = 'pl-PL')
+	{
+		if ($_cache === null) {
+			$_categories = $this->get_categories($_lang);
+		} else {
+			$_categories = $_cache;
+		}
+
+		$_result = null;
+		foreach ($_categories as $_category) {
+			if ($_category->code == $_code) {
+				$_result = $_category;
+				if ($_inherit_attributes === true && isset($_result->parentCode)) {
+					$_result->attributeCodes->attributeCode = array_merge(
+						$_result->attributeCodes->attributeCode,
+						$this->get_category_from($_cache, $_result->parentCode, true, $_lang)->attributeCodes->attributeCode
+					);
+				}
+				break;
+			}
+		}
+		return $_result;
+	}
+
+	public function get_category($_code, $_inherit_attributes = true, $_lang = 'pl-PL')
+	{
+		return $this->get_category_from(null, $_code, $_inherit_attributes, $_lang);
+	}
+
 	public function get_dictionaries($lang = 'pl-PL')
 	{
 		return $this->get_metadata($lang)->ritDictionary;
