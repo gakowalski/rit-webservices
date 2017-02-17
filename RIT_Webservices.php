@@ -89,15 +89,23 @@ class RIT_Webservices
   }
 
 	/*
-		Internal function creating SoapClient object for webservice of given name.
+		Function creating SoapClient object for webservice of given name.
 
-		Example:
+		Example for internal use:
 
 			$ws	= $this->get_webservice('MetadataOfRIT');
 			// ... creating request object ...
 			return $ws->getMetadataOfRIT($request);
+
+		Example for manual SoapClient usage:
+
+			$webservice = new RIT_Webservices('login', 'pass', 'cert.pem', 'env');
+			$client = $webservice->get_webservice('GiveTouristObjects');
+			// ... creating request object
+			$client->addModifyObject($request);
+
 	*/
-  protected function get_webservice($method_name)
+  public function get_webservice($method_name)
   {
     $url = $this->instances[$this->instance] . $method_name;
     $webservice = new SoapClient("$url?wsdl", $this->soap_options);
@@ -165,6 +173,14 @@ class RIT_Webservices
 		throw new Exception("Metod not implemented.");
  	}
 
+	/*
+
+		TO DO: description and examples
+
+		See: create_tourist_object()
+
+	*/
+
 	public function add_object($object)
   {
     $ws	= $this->get_webservice('GiveTouristObjects');
@@ -194,6 +210,16 @@ class RIT_Webservices
 		$id->concatenationOfField = $unique_string_id;
 		return $id;
 	}
+
+	/*
+		TO DO: description and examples
+
+		object_id -> int or object created by encode_object_id() / create_object_id()
+		last_modified ->
+		categories -> array of strings with category names
+		attributes -> array of key=>values where key contain attribute code and value contains attribute value
+		attachments -> ?
+	*/
 
 	public function create_tourist_object($object_id, $last_modified, $categories, $attributes, $attachments = array()) {
 		$object = new \stdClass;
