@@ -11,7 +11,7 @@
  *
  * Level 3) Request creating with some helper functions to decode and process recieved response.
  *
- * At level 1 you need to know only about {@see __construct()} and {@see get_webservice}. The latter will give you SoapClient object.
+ * At level 1 you need to know only about {@see __construct()} and {@see get_webservice()}. The latter will give you SoapClient object.
  *
  * At level 2 you can start with reading documentation of {@see add_object()} and tracing its helper functions to encode object identifier.
  * Then you can discover large family of wrappers for {@see get_objects()}. Then there are:
@@ -23,8 +23,8 @@
  * {@see get_languages()},
  * {@see get_dictionary()},
  * {@see get_dictionaries()},
- * {@see get_dictionary_title},
- * {@see get_dictionary_values},
+ * {@see get_dictionary_title()},
+ * {@see get_dictionary_values()},
  * {@see get_category()},
  * {@see get_categories()}.
  * More are underway.
