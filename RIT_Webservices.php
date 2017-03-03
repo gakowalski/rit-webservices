@@ -68,8 +68,16 @@ class RIT_Webservices
 	 */
   protected $soap_options;
 
+	/**
+	 * Last XML response (only if trace parameter of {@see __construct()} is set; otherwise NULL)
+	 * @var string
+	 */
 	public $xml_response;
 
+	/**
+	 * Last XML request (only if trace parameter of {@see __construct()} is set; otherwise NULL)
+	 * @var string
+	 */
 	public $xml_request;
 
 	/**
@@ -438,7 +446,7 @@ class RIT_Webservices
 		$object->attributes->attribute = array();
 		foreach ($attributes as $_attribute_code => $_attribute_value) {
 			$object->attributes->attribute[] = (object) array(
-				'_' => array('attrVals' => array('_' => $_attribute_value, 'language' => 'pl-PL')),
+				'attrVals' => array('value' => $_attribute_value, 'language' => 'pl-PL'),
 				'code' => $_attribute_code,
 			);
 		}
@@ -529,6 +537,60 @@ class RIT_Webservices
 	public function get_attributes($lang = 'pl-PL')
 	{
 		return $this->get_metadata($lang)->ritAttribute;
+	}
+
+	protected function get_attribute_from($_cache, $_code, $_lang = 'pl-PL')
+	{
+		if ($_cache === null) {
+			$_attributes = $this->get_attributes($_lang);
+		} else {
+			$_attributes = $_cache;
+		}
+
+		$_result = null;
+		foreach ($_attributes as $_attribute) {
+			if ($_attribute->code == $_code) {
+				$_result = $_attribute;
+				break;
+			}
+		}
+
+		return $_result;
+	}
+
+	public function get_attribute($_code, $_lang = 'pl-PL')
+	{
+		return $this->get_attribute_from(null, $_code, $_lang);
+	}
+
+	public function is_translatable($_code)
+	{
+		switch ($_code) {
+			case 'A009':	// wojewodztwo
+			case 'A010':	// powiat
+			case 'A011':	// gmina
+			case 'A012':	// miejscowosc
+				return false;
+			default:
+		}
+
+		$_type = $this->get_attribute($_code)->typeValidator;
+
+		switch ($_type) {
+			case 'SHORT_TEXT':
+			case 'LONG_TEXT':
+			case 'MULTIPLY_LIST':
+			case 'SINGLE_LIST':
+				return true;
+
+			case 'NUMBER':
+			case 'BOOLEAN':
+			case 'DATE ':
+			case 'COMPLEX ':
+			default:
+		}
+
+		return false;
 	}
 
 	public function get_categories($lang = 'pl-PL')
