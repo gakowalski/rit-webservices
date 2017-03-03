@@ -68,6 +68,10 @@ class RIT_Webservices
 	 */
   protected $soap_options;
 
+	public $xml_response;
+
+	public $xml_request;
+
 	/**
 	 * Array of available RIT instances
 	 * @var array
@@ -93,12 +97,15 @@ class RIT_Webservices
  * @param string $pass     Password
  * @param string $cert     Path and filename of certificate file (*.pem format)
  * @param string $instance RIT instance/environment name from {@see $instances}
+ * @param boolean $trace   if true, store request and response XMLs to further inspection
  * @throws Exception
  */
-	public function __construct($user, $pass, $cert, $instance = 'production')
+	public function __construct($user, $pass, $cert, $instance = 'production', $trace = false)
   {
 		$this->user = $user;
     $this->instance = $instance;
+		$this->xml_response = null;
+		$this->xml_request = null;
 
 		if (file_exists($cert) === false) {
 			throw new Exception("Certificate file '$cert' not found!");
@@ -123,8 +130,14 @@ class RIT_Webservices
 			'local_cert' 	   => $cert,
 			'passphrase' 	   => $pass,
 			'stream_context' => $stream_context,
+			'trace'					 => $trace,
 			'compression'		 => SOAP_COMPRESSION_ACCEPT | SOAP_COMPRESSION_GZIP | SOAP_COMPRESSION_DEFLATE,
     );
+	}
+
+	private function store_trace_data($soap_client_object) {
+		$this->xml_response = $soap_client_object->__getLastResponse();
+		$this->xml_request = $soap_client_object->__getLastRequest();
 	}
 
 /**
@@ -211,7 +224,9 @@ class RIT_Webservices
 			'searchCondition'	=> $where,
 		);
 
-		return $ws->searchTouristObjects($request);
+		$result = $ws->searchTouristObjects($request);
+		$this->store_trace_data($ws);
+		return $result;
 	}
 
 /**
@@ -268,6 +283,63 @@ class RIT_Webservices
 /**
  * Send new object to RIT database
  *
+ * Example:
+ * <code>
+ * $object = $webservice->create_tourist_object(
+ *	 $webservice->encode_object_id(124, 'my_test_objects_table'),
+ *	 date('Y-m-dP', time() - 86400), // last modified yesterday
+ *	 array(
+ *		 'C040', // pokoje goscinne
+ *	 ),
+ *	 array(
+ *		 'A001' => 'Testowa nazwa testowego obiektu',
+ *		 'A003' => 'Testowy krótki opis testowego obiektu',
+ *		 'A004' => 'Testowy długi opis testowego obiektu',
+ *		 //'A009' => D039 single,
+ *		 //'A010' => D040 single,
+ *		 //'A011' => D041 single,
+ *		 //'A012' => D042 single,
+ *		 // 'A013' => D003 single,
+ *		 'A014' => 'Testowa ulica',
+ *		 'A015' => '1A', // numer budynku
+ *		 'A016' => '2B', // numer lokalu
+ *		 'A017' => '01-234', // kod pocztowy
+ *		 'A018' => '51.123456,20.123456', // wspolrzedne geograficzne
+ *		 //'A019' => D004 multiple,
+ *		 'A020' => 'Testowy opis dojazdu',
+ *		 //'A021' => D005 multiple,
+ *		 'A044' => '11-11', // poczatek sezonu
+ *		 'A045' => '12-12', // koniec sezonu
+ *		 'A047' => '09-09', // poczatek sezonu dodatkowego
+ *		 'A048' => '10-10', // koniec sezonu dodatkowego
+ *		 'A057' => 'Testowe uwagi dotyczące dostępności',
+ *		 'A059' => '+48 001234567',
+ *		 'A060' => '+48 001234567',
+ *		 'A061' => 'Testowy numer specjalny',
+ *		 'A062' => '+48 123456789',
+ *		 'A063' => '+48 001234567',
+ *		 'A064' => 'test@test.pl',
+ *		 'A065' => 'pot.gov.pl',
+ *		 'A066' => 'GG:123456789',
+ *		 'A069' => '100-200 zł',
+ *		 //'A070' => D008 multiple,
+ *		 //'A086' => D015 multiple,
+ *		 //'A087' => D016 multiple,
+ *		 'A089' => 123,
+ *		 'A090' => 45,
+ *		 'A091' => 6,
+ *		 //'A095' => D018 multiple,
+ *		 'A096' => 'Testowe uwagi do miejsc noclegowych',
+ *		 //'A127' => D032 multiple,
+ *		 //'A128' => D033 multiple,
+ *		 //'A129' => D034 multiple,
+ *		 //'A130' => D035 multiple,
+ *	 ),
+ *	 null
+ * );
+ * $result = $webservice->add_object($object);
+ * </code>
+ *
  * @param object $object Tourist object encoded using {@see create_tourist_object()}
  * or manually crafted as 'touristObject' subpart of the addModifyObject request
  *
@@ -283,6 +355,7 @@ class RIT_Webservices
 		);
 
 		$result = $ws->addModifyObject($request);
+		$this->store_trace_data($ws);
 		return $result;
 	}
 
@@ -365,8 +438,8 @@ class RIT_Webservices
 		$object->attributes->attribute = array();
 		foreach ($attributes as $_attribute_code => $_attribute_value) {
 			$object->attributes->attribute[] = (object) array(
+				'_' => array('attrVals' => array('_' => $_attribute_value, 'language' => 'pl-PL')),
 				'code' => $_attribute_code,
-				'_' => array('attrVals' => array('language' => 'pl-PL', '_' => $_attribute_value)),
 			);
 		}
 		if (!empty($attachments)) {
@@ -413,7 +486,9 @@ class RIT_Webservices
 			'transactionIdentifier'	=> $transaction_id,
 		);
 
-		return $ws->getReport($request);
+		$result = $ws->getReport($request);
+		$this->store_trace_data($ws);
+		return $result;
 	}
 
 /**
@@ -441,8 +516,9 @@ class RIT_Webservices
 			'metric'	=> $this->get_metric(),
 			'language'	=> $lang,
 		);
-
-		return $ws->getMetadataOfRIT($request);
+		$result = $ws->getMetadataOfRIT($request);
+		$this->store_trace_data($ws);
+		return $result;
 	}
 
 	public function get_metadata_last_modification_date($lang = 'pl-PL')
@@ -583,6 +659,8 @@ class RIT_Webservices
 			),
 		);
 
-		return $ws->getEvents($request);
+		$result = $ws->getEvents($request);
+		$this->store_trace_data($ws);
+		return $result;
 	}
 }
