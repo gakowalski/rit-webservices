@@ -300,48 +300,48 @@ class RIT_Webservices
  *		 'C040', // pokoje goscinne
  *	 ),
  *	 array(
- *		 'A001' => 'Testowa nazwa testowego obiektu',
- *		 'A003' => 'Testowy krótki opis testowego obiektu',
- *		 'A004' => 'Testowy długi opis testowego obiektu',
- *		 //'A009' => D039 single,
- *		 //'A010' => D040 single,
- *		 //'A011' => D041 single,
- *		 //'A012' => D042 single,
- *		 // 'A013' => D003 single,
- *		 'A014' => 'Testowa ulica',
- *		 'A015' => '1A', // numer budynku
- *		 'A016' => '2B', // numer lokalu
- *		 'A017' => '01-234', // kod pocztowy
- *		 'A018' => '51.123456,20.123456', // wspolrzedne geograficzne
- *		 //'A019' => D004 multiple,
- *		 'A020' => 'Testowy opis dojazdu',
- *		 //'A021' => D005 multiple,
- *		 'A044' => '11-11', // poczatek sezonu
- *		 'A045' => '12-12', // koniec sezonu
- *		 'A047' => '09-09', // poczatek sezonu dodatkowego
- *		 'A048' => '10-10', // koniec sezonu dodatkowego
- *		 'A057' => 'Testowe uwagi dotyczące dostępności',
- *		 'A059' => '+48 001234567',
- *		 'A060' => '+48 001234567',
- *		 'A061' => 'Testowy numer specjalny',
- *		 'A062' => '+48 123456789',
- *		 'A063' => '+48 001234567',
- *		 'A064' => 'test@test.pl',
- *		 'A065' => 'pot.gov.pl',
- *		 'A066' => 'GG:123456789',
- *		 'A069' => '100-200 zł',
- *		 //'A070' => D008 multiple,
- *		 //'A086' => D015 multiple,
- *		 //'A087' => D016 multiple,
- *		 'A089' => 123,
- *		 'A090' => 45,
- *		 'A091' => 6,
- *		 //'A095' => D018 multiple,
- *		 'A096' => 'Testowe uwagi do miejsc noclegowych',
- *		 //'A127' => D032 multiple,
- *		 //'A128' => D033 multiple,
- *		 //'A129' => D034 multiple,
- *		 //'A130' => D035 multiple,
+ *     'A001' => 'Testowa nazwa testowego obiektu',
+ *     'A003' => 'Testowy krótki opis testowego obiektu',
+ *     'A004' => 'Testowy długi opis testowego obiektu',
+ *     'A009' => 'mazowieckie',
+ *     'A010' => 'Warszawa', // powiat
+ *     'A011' => 'Warszawa', // gmina
+ *     'A012' => 'Warszawa', // miejscowosc
+ *     'A013' => 'Ulica',
+ *     'A014' => 'Testowa ulica',
+ *     'A015' => '1A', // numer budynku
+ *     'A016' => '2B', // numer lokalu
+ *     'A017' => '01-234', // kod pocztowy
+ *     'A018' => '51.123456,20.123456', // wspolrzedne geograficzne
+ *     'A019' => Array('W mieście', 'W centrum miasta'),
+ *     'A020' => 'Testowy opis dojazdu',
+ *     'A021' => 'Inny',	// region turystyczny
+ *     'A044' => '11-11', // poczatek sezonu
+ *     'A045' => '12-12', // koniec sezonu
+ *     'A047' => '09-09', // poczatek sezonu dodatkowego
+ *     'A048' => '10-10', // koniec sezonu dodatkowego
+ *     'A057' => 'Testowe uwagi dotyczące dostępności',
+ *     'A059' => '+48 001234567',
+ *     'A060' => '+48 001234567',
+ *     'A061' => 'Testowy numer specjalny',
+ *     'A062' => '+48 123456789',
+ *     'A063' => '+48 001234567',
+ *     'A064' => 'test@test.pl',
+ *     'A065' => 'pot.gov.pl',
+ *     'A066' => 'GG:123456789',
+ *     'A069' => '100-200 zł',
+ *     'A070' => Array('Dzieci', 'Rodziny', 'Seniorzy', 'Studenci'), // znizki
+ *     'A086' => 'Gospodarstwa Gościnne', // przynaleznosc do sieci,
+ *     'A087' => Array('Leśniczówka, kwatera myśliwska', 'Apartamenty'), // D016 multiple,
+ *     'A089' => 123,
+ *     'A090' => 45,
+ *     'A091' => 6,
+ *     'A095' => Array('Internet bezpłatny', 'Internet', 'Masaż'),
+ *     'A096' => 'Testowe uwagi do miejsc noclegowych',
+ *     //'A127' => D032 multiple,
+ *     //'A128' => D033 multiple,
+ *     //'A129' => D034 multiple,
+ *     //'A130' => D035 multiple,
  *	 ),
  *	 null
  * );
@@ -442,11 +442,13 @@ class RIT_Webservices
 			$object->categories->category[] = (object) array('code' => $category);
 		}
 
+    $_attributes = $this->get_attributes();
+
 		$object->attributes = new \stdClass;
 		$object->attributes->attribute = array();
 		foreach ($attributes as $_attribute_code => $_attribute_value) {
 			$object->attributes->attribute[] = (object) array(
-				'attrVals' => array('value' => $_attribute_value, 'language' => 'pl-PL'),
+				'attrVals' => array('value' => $_attribute_value, 'language' => $this->is_translatable_from($_attributes, $_attribute_code)? 'pl-PL' : 'all'),
 				'code' => $_attribute_code,
 			);
 		}
@@ -539,14 +541,8 @@ class RIT_Webservices
 		return $this->get_metadata($lang)->ritAttribute;
 	}
 
-	protected function get_attribute_from($_cache, $_code, $_lang = 'pl-PL')
+	protected function get_attribute_from($_attributes, $_code)
 	{
-		if ($_cache === null) {
-			$_attributes = $this->get_attributes($_lang);
-		} else {
-			$_attributes = $_cache;
-		}
-
 		$_result = null;
 		foreach ($_attributes as $_attribute) {
 			if ($_attribute->code == $_code) {
@@ -554,16 +550,15 @@ class RIT_Webservices
 				break;
 			}
 		}
-
 		return $_result;
 	}
 
 	public function get_attribute($_code, $_lang = 'pl-PL')
 	{
-		return $this->get_attribute_from(null, $_code, $_lang);
+		return $this->get_attribute_from($this->get_attributes($_lang), $_code);
 	}
 
-	public function is_translatable($_code)
+	protected function is_translatable_from($_attributes, $_code)
 	{
 		switch ($_code) {
 			case 'A009':	// wojewodztwo
@@ -574,7 +569,7 @@ class RIT_Webservices
 			default:
 		}
 
-		$_type = $this->get_attribute($_code)->typeValidator;
+		$_type = $this->get_attribute_from($_attributes, $_code)->typeValidator;
 
 		switch ($_type) {
 			case 'SHORT_TEXT':
@@ -585,8 +580,8 @@ class RIT_Webservices
 
 			case 'NUMBER':
 			case 'BOOLEAN':
-			case 'DATE ':
-			case 'COMPLEX ':
+			case 'DATE':
+			case 'COMPLEX':
 			default:
 		}
 
