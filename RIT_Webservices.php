@@ -505,7 +505,7 @@ class RIT_Webservices
  * Recieve all available metadata from metadata webservice
  *
  * Notice: metadata webservice does not send complete RIT metadata. Some datasets are ommited due to their large size which considerably
- * increses response times of the webserve. Those datasets can be found elsewhere in public databases, e.g. list of cities or regions can be found
+ * increses response times of the webservice. Those datasets can be found elsewhere in public databases, e.g. list of cities or regions can be found
  * in public TERYT databases.
  *
  * Example:
