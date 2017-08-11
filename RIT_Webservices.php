@@ -406,6 +406,39 @@ class RIT_Webservices
 		return $id;
 	}
 
+	public function encode_attachment_license($valid_to, $owner) {
+		$license = new \stdClass;
+		$license->validTo = $valid_to;
+		$license->distributionChannelOwner = $owner;
+		return $license;
+	}
+
+	public function create_attachment($name, $type, $source, $license = NULL, $source_type = 'URL') {
+		$attachment = new \stdClass;
+		$attachment->fileName = $name;
+		$attachment->fileType = $type;
+
+		switch ($source_type) {
+			case 'ftp':
+				$attachment->relativePathToDirectory = $source;
+				break;
+
+			case 'base64':
+				$attachment->encoded = $source;
+				break;
+
+			case 'URL':
+			default:
+				$attachment->URL = $source;
+		}
+
+		if ($license) {
+			$attachment->certificate = $license;
+		}
+
+		return $attachment;
+	}
+
 /**
  * Encode tourist data object as subpart of request issued by {@see add_object()}.
  *
@@ -453,7 +486,13 @@ class RIT_Webservices
 			);
 		}
 		if (!empty($attachments)) {
-			$object->binaryDocuments = (object) $attachments;
+			$object->binaryDocuments = new \stdClass;
+
+			foreach ($attachments as $attachment) {
+				if (isset($attachment->URL)) $object->binaryDocuments->documentURL[] = $attachment;
+				if (isset($attachment->relativePathToDirectory)) $object->binaryDocuments->documentFile[] = $attachment;
+				if (isset($attachment->encoded)) $object->binaryDocuments->documentBase64[] = $attachment;
+			}
 		}
 		return $object;
 	}
