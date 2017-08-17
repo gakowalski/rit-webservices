@@ -109,10 +109,12 @@ final class RIT_WebservicesTest extends TestCase
         self::$api->create_attachment(
           'sample-rectangular-photo.jpg',
           'image/jpeg',
+          'https://unsplash.it/400'
         ),
         self::$api->create_attachment(
           'sample-landscape-photo-licensed.jpg',
           'image/jpeg',
+          'https://unsplash.it/400/200',
            self::$api->encode_attachment_license(
              date('Y-m-dP', time() + 86400),  //< tommorow
              'John Doe' //< owner
