@@ -53,6 +53,11 @@ final class RIT_WebservicesTest extends TestCase
     unset($metadata);
   }
 
+  /**
+   * @covers RIT_Webservices::create_tourist_object
+   * @covers RIT_Webservices::encode_object_id
+   * @covers RIT_Webservices::create_attachment
+   */
   public function test_add_object() {
     $object = self::$api->create_tourist_object(
       self::$api->encode_object_id(12345, 'my_test_table'),
@@ -74,7 +79,7 @@ final class RIT_WebservicesTest extends TestCase
        'A016' => '2B', // numer lokalu
        'A017' => '01-234', // kod pocztowy
        'A018' => '51.123456,20.123456', // wspolrzedne geograficzne
-       'A019' => Array('W mieście', 'W centrum miasta'),
+       'A019' => array('W mieście', 'W centrum miasta'),
        'A020' => 'Testowy opis dojazdu',
        'A021' => 'Inny',	// region turystyczny
        'A044' => '11-11', // poczatek sezonu
@@ -91,20 +96,29 @@ final class RIT_WebservicesTest extends TestCase
        'A065' => 'pot.gov.pl',
        'A066' => 'GG:123456789',
        'A069' => '100-200 zł',
-       'A070' => Array('Dzieci', 'Rodziny', 'Seniorzy', 'Studenci'), // znizki
+       'A070' => array('Dzieci', 'Rodziny', 'Seniorzy', 'Studenci'), // znizki
        'A086' => 'Gospodarstwa Gościnne', // przynaleznosc do sieci,
-       'A087' => Array('Leśniczówka, kwatera myśliwska', 'Apartamenty'), // D016 multiple,
+       'A087' => array('Leśniczówka, kwatera myśliwska', 'Apartamenty'), // D016 multiple,
        'A089' => 123,
        'A090' => 45,
        'A091' => 6,
-       'A095' => Array('Internet bezpłatny', 'Internet', 'Masaż'),
+       'A095' => array('Internet bezpłatny', 'Internet', 'Masaż'),
        'A096' => 'Testowe uwagi do miejsc noclegowych',
-       //'A127' => D032 multiple,
-       //'A128' => D033 multiple,
-       //'A129' => D034 multiple,
-       //'A130' => D035 multiple,
       ),
-      null
+      array(
+        self::$api->create_attachment(
+          'sample-rectangular-photo.jpg',
+          'image/jpeg',
+        ),
+        self::$api->create_attachment(
+          'sample-landscape-photo-licensed.jpg',
+          'image/jpeg',
+           self::$api->encode_attachment_license(
+             date('Y-m-dP', time() + 86400),  //< tommorow
+             'John Doe' //< owner
+          )
+        ),
+      )
     );
 
     $result = self::$api->add_object($object);

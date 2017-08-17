@@ -21,3 +21,6 @@ Prepare `bootstrap.php` from `bootstrap.sample.php` and run PHPUnit:
 ```
 phpunit
 ```
+
+Some notes:
+* images for test objects are generated randomly from [unsplash.it](https://unsplash.it/).
