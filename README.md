@@ -13,3 +13,11 @@ php apigen.phar generate -d docs -s rit-webservices
 ```
 
 Above command generates documentation in folder `docs` from all files in folder `rit-webservices`.
+
+## Running tests
+
+Prepare `bootstrap.php` from `bootstrap.sample.php` and run PHPUnit:
+
+```
+phpunit
+```
