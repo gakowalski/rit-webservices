@@ -57,6 +57,7 @@ final class RIT_WebservicesTest extends TestCase
    * @covers RIT_Webservices::create_tourist_object
    * @covers RIT_Webservices::encode_object_id
    * @covers RIT_Webservices::create_attachment
+   * @covers RIT_Webservices::encode_attachment_license
    */
   public function test_add_object() {
     $object = self::$api->create_tourist_object(
