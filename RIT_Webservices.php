@@ -46,7 +46,7 @@
  * @author Grzegorz Kowalski
  *
  * @todo Complete descriptions of all methods
- * @todo Complete implementation of RIT webservice API (mass action methods, full language code support, attachments)
+ * @todo Complete implementation of RIT webservice API (e.g. mass action methods)
  */
 class RIT_Webservices
 {
@@ -300,48 +300,44 @@ class RIT_Webservices
  *		 'C040', // pokoje goscinne
  *	 ),
  *	 array(
- *     'A001' => 'Testowa nazwa testowego obiektu',
- *     'A003' => 'Testowy krótki opis testowego obiektu',
- *     'A004' => 'Testowy długi opis testowego obiektu',
- *     'A009' => 'mazowieckie',
- *     'A010' => 'Warszawa', // powiat
- *     'A011' => 'Warszawa', // gmina
- *     'A012' => 'Warszawa', // miejscowosc
- *     'A013' => 'Ulica',
- *     'A014' => 'Testowa ulica',
- *     'A015' => '1A', // numer budynku
- *     'A016' => '2B', // numer lokalu
- *     'A017' => '01-234', // kod pocztowy
- *     'A018' => '51.123456,20.123456', // wspolrzedne geograficzne
- *     'A019' => Array('W mieście', 'W centrum miasta'),
- *     'A020' => 'Testowy opis dojazdu',
- *     'A021' => 'Inny',	// region turystyczny
- *     'A044' => '11-11', // poczatek sezonu
- *     'A045' => '12-12', // koniec sezonu
- *     'A047' => '09-09', // poczatek sezonu dodatkowego
- *     'A048' => '10-10', // koniec sezonu dodatkowego
- *     'A057' => 'Testowe uwagi dotyczące dostępności',
- *     'A059' => '+48 001234567',
- *     'A060' => '+48 001234567',
- *     'A061' => 'Testowy numer specjalny',
- *     'A062' => '+48 123456789',
- *     'A063' => '+48 001234567',
- *     'A064' => 'test@test.pl',
- *     'A065' => 'pot.gov.pl',
- *     'A066' => 'GG:123456789',
- *     'A069' => '100-200 zł',
- *     'A070' => Array('Dzieci', 'Rodziny', 'Seniorzy', 'Studenci'), // znizki
- *     'A086' => 'Gospodarstwa Gościnne', // przynaleznosc do sieci,
- *     'A087' => Array('Leśniczówka, kwatera myśliwska', 'Apartamenty'), // D016 multiple,
- *     'A089' => 123,
- *     'A090' => 45,
- *     'A091' => 6,
- *     'A095' => Array('Internet bezpłatny', 'Internet', 'Masaż'),
- *     'A096' => 'Testowe uwagi do miejsc noclegowych',
- *     //'A127' => D032 multiple,
- *     //'A128' => D033 multiple,
- *     //'A129' => D034 multiple,
- *     //'A130' => D035 multiple,
+ *	  'A001' => array('pl-PL' => 'Testowa nazwa testowego obiektu PL', 'en-GB' => 'Test name of test object'),
+ *	  'A003' => array('pl-PL' => 'Testowy krótki opis testowego obiektu', 'en-GB' => 'Short description'),
+ *	  'A004' => array('pl-PL' => 'Testowy długi opis testowego obiektu', 'en-GB' => 'Long description'),
+ *	  'A009' => array('pl-PL' => 'mazowieckie'),
+ *	  'A010' => array('pl-PL' => 'Warszawa'), // powiat
+ *	  'A011' => array('pl-PL' => 'Warszawa'), // gmina
+ *	  'A012' => array('pl-PL' => 'Warszawa'), // miejscowosc
+ *	  'A013' => array('pl-PL' => 'Ulica'),
+ *	  'A014' => array('pl-PL' => 'Testowa ulica'),
+ *	  'A015' => array('pl-PL' => '1A'), // numer budynku
+ *	  'A016' => array('pl-PL' => '2B'), // numer lokalu
+ *	  'A017' => array('pl-PL' => '01-234'), // kod pocztowy
+ *	  'A018' => array('pl-PL' => '51.123456,20.123456'), // wspolrzedne geograficzne
+ *	  'A019' => array('pl-PL' => array('W mieście', 'W centrum miasta')),
+ *	  'A020' => array('pl-PL' => 'Testowy opis dojazdu'),
+ *	  'A021' => array('pl-PL' => 'Inny'),	// region turystyczny
+ *	  'A044' => array('pl-PL' => '11-11'), // poczatek sezonu
+ *	  'A045' => array('pl-PL' => '12-12'), // koniec sezonu
+ *	  'A047' => array('pl-PL' => '09-09'), // poczatek sezonu dodatkowego
+ *	  'A048' => array('pl-PL' => '10-10'), // koniec sezonu dodatkowego
+ *	  'A057' => array('pl-PL' => 'Testowe uwagi dotyczące dostępności'),
+ *	  'A059' => array('pl-PL' => '+48 001234567'),
+ *	  'A060' => array('pl-PL' => '+48 001234567'),
+ *	  'A061' => array('pl-PL' => 'Testowy numer specjalny'),
+ *	  'A062' => array('pl-PL' => '+48 123456789'),
+ *	  'A063' => array('pl-PL' => '+48 001234567'),
+ *	  'A064' => array('pl-PL' => 'test@test.pl'),
+ *	  'A065' => array('pl-PL' => 'pot.gov.pl'),
+ *	  'A066' => array('pl-PL' => 'GG:123456789'),
+ *	  'A069' => array('pl-PL' => '100-200 zł'),
+ *	  'A070' => array('pl-PL' => array('Dzieci', 'Rodziny', 'Seniorzy', 'Studenci')), // znizki
+ *	  'A086' => array('pl-PL' => 'Gospodarstwa Gościnne'), // przynaleznosc do sieci,
+ *	  'A087' => array('pl-PL' => array('Leśniczówka, kwatera myśliwska', 'Apartamenty')), // D016 multiple,
+ *	  'A089' => array('pl-PL' => 123),
+ *	  'A090' => array('pl-PL' => 45),
+ *	  'A091' => array('pl-PL' => 6),
+ *	  'A095' => array('pl-PL' => array('Internet bezpłatny', 'Internet', 'Masaż')),
+ *	  'A096' => array('pl-PL' => 'Testowe uwagi do miejsc noclegowych', 'en-GB' => 'Accomodation notice'),
  *	 ),
  *	 array(
  *		 $webservice->create_attachment(
@@ -451,15 +447,13 @@ class RIT_Webservices
  * @param  mixed $object_id      RIT ID encoded as int or external ID encoded as object by {@see encode_object_id()} or {@see create_object_id()}
  * @param  string $last_modified Datetime of last modification in format of 'Y-m-dP'
  * @param  array  $categories    Array of strings with category names
- * @param  array  $attributes    Array of key=>values where key contain attribute code and value contains attribute value
+ * @param  array  $attributes    Array of attribute_code=>array(language_code=>value) or attribute_code=>array(language_code=>array(values))
  * @param  array  $attachments	 Array of objects generated by {@see create_attachment()}
  * @return object                Tourist object to be used in {@see add_object()} call
  * @see RIT_Webservices::add_object()
  * @see RIT_Webservices::encode_object_id()
  * @see RIT_Webservices::create_object_id()
  * @see create_attachment()
- *
- * @todo Add possiblity to add another language versions
  */
 	public function create_tourist_object($object_id, $last_modified, $categories, $attributes, $attachments = array()) {
 		$object = new \stdClass;
@@ -484,9 +478,20 @@ class RIT_Webservices
 
 		$object->attributes = new \stdClass;
 		$object->attributes->attribute = array();
-		foreach ($attributes as $_attribute_code => $_attribute_value) {
+		foreach ($attributes as $_attribute_code => $_attribute_lang_values) {
+			$tmp_object = array();
+
+			foreach ($_attribute_lang_values as $_attribute_language => $_attribute_values) {
+				if ($this->is_translatable_from($_attributes, $_attribute_code)) {
+					$tmp_object[] = array('value' => $_attribute_values, 'language' => $_attribute_language);
+				} else {
+					$tmp_object[] = array('value' => $_attribute_values, 'language' => 'all');
+					break;
+				}
+			}
+
 			$object->attributes->attribute[] = (object) array(
-				'attrVals' => array('value' => $_attribute_value, 'language' => $this->is_translatable_from($_attributes, $_attribute_code)? 'pl-PL' : 'all'),
+				'attrVals' => $tmp_object,
 				'code' => $_attribute_code,
 			);
 		}
