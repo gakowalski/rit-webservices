@@ -510,8 +510,17 @@ class RIT_Webservices
 	/**
 	 * @ignore
 	 */
-	public function add_objects() {
-		throw new Exception("Metod not implemented.");
+	public function add_objects($objects) {
+		$ws	= $this->get_webservice('GiveTouristObjects');
+
+		$request = (object) array(
+			'metric'	=> $this->get_metric(),
+			'touristObject'	=> $objects, 
+		);
+
+		$result = $ws->addModifyObjects($request);
+		$this->store_trace_data($ws);
+		return $result;
 	}
 
 	/**

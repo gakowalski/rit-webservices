@@ -60,51 +60,56 @@ final class RIT_WebservicesTest extends TestCase
    * @covers RIT_Webservices::encode_attachment_license
    */
   public function test_add_object() {
+    global $phpunit_test_config;
+
     $object = self::$api->create_tourist_object(
-      self::$api->encode_object_id(12345, 'my_test_table'),
+      self::$api->encode_object_id(
+        $phpunit_test_config['dummy_source_object_id'],
+        $phpunit_test_config['dummy_source_table_name']
+      ),
       date('Y-m-dP', time() - 86400), // last modified yesterday
       array(
        'C040', //< guest rooms category
       ),
       array(
-       'A001' => 'Testowa nazwa testowego obiektu',
-       'A003' => 'Testowy krótki opis testowego obiektu',
-       'A004' => 'Testowy długi opis testowego obiektu',
-       'A009' => 'mazowieckie',
-       'A010' => 'Warszawa', // powiat
-       'A011' => 'Warszawa', // gmina
-       'A012' => 'Warszawa', // miejscowosc
-       'A013' => 'Ulica',
-       'A014' => 'Testowa ulica',
-       'A015' => '1A', // numer budynku
-       'A016' => '2B', // numer lokalu
-       'A017' => '01-234', // kod pocztowy
-       'A018' => '51.123456,20.123456', // wspolrzedne geograficzne
-       'A019' => array('W mieście', 'W centrum miasta'),
-       'A020' => 'Testowy opis dojazdu',
-       'A021' => 'Inny',	// region turystyczny
-       'A044' => '11-11', // poczatek sezonu
-       'A045' => '12-12', // koniec sezonu
-       'A047' => '09-09', // poczatek sezonu dodatkowego
-       'A048' => '10-10', // koniec sezonu dodatkowego
-       'A057' => 'Testowe uwagi dotyczące dostępności',
-       'A059' => '+48 001234567',
-       'A060' => '+48 001234567',
-       'A061' => 'Testowy numer specjalny',
-       'A062' => '+48 123456789',
-       'A063' => '+48 001234567',
-       'A064' => 'test@test.pl',
-       'A065' => 'pot.gov.pl',
-       'A066' => 'GG:123456789',
-       'A069' => '100-200 zł',
-       'A070' => array('Dzieci', 'Rodziny', 'Seniorzy', 'Studenci'), // znizki
-       'A086' => 'Gospodarstwa Gościnne', // przynaleznosc do sieci,
-       'A087' => array('Leśniczówka, kwatera myśliwska', 'Apartamenty'), // D016 multiple,
-       'A089' => 123,
-       'A090' => 45,
-       'A091' => 6,
-       'A095' => array('Internet bezpłatny', 'Internet', 'Masaż'),
-       'A096' => 'Testowe uwagi do miejsc noclegowych',
+        'A001' => array('pl-PL' => 'Testowa nazwa testowego obiektu PL', 'en-GB' => 'Test name of test object'),
+        'A003' => array('pl-PL' => 'Testowy krótki opis testowego obiektu', 'en-GB' => 'Short description'),
+        'A004' => array('pl-PL' => 'Testowy długi opis testowego obiektu', 'en-GB' => 'Long description'),
+        'A009' => array('pl-PL' => 'mazowieckie'),
+        'A010' => array('pl-PL' => 'Warszawa'), // powiat
+        'A011' => array('pl-PL' => 'Warszawa'), // gmina
+        'A012' => array('pl-PL' => 'Warszawa'), // miejscowosc
+        'A013' => array('pl-PL' => 'Ulica'),
+        'A014' => array('pl-PL' => 'Testowa ulica'),
+        'A015' => array('pl-PL' => '1A'), // numer budynku
+        'A016' => array('pl-PL' => '2B'), // numer lokalu
+        'A017' => array('pl-PL' => '01-234'), // kod pocztowy
+        'A018' => array('pl-PL' => '51.123456,20.123456'), // wspolrzedne geograficzne
+        'A019' => array('pl-PL' => array('W mieście', 'W centrum miasta')),
+        'A020' => array('pl-PL' => 'Testowy opis dojazdu'),
+        'A021' => array('pl-PL' => 'Inny'),	// region turystyczny
+        'A044' => array('pl-PL' => '11-11'), // poczatek sezonu
+        'A045' => array('pl-PL' => '12-12'), // koniec sezonu
+        'A047' => array('pl-PL' => '09-09'), // poczatek sezonu dodatkowego
+        'A048' => array('pl-PL' => '10-10'), // koniec sezonu dodatkowego
+        'A057' => array('pl-PL' => 'Testowe uwagi dotyczące dostępności'),
+        'A059' => array('pl-PL' => '+48 001234567'),
+        'A060' => array('pl-PL' => '+48 001234567'),
+        'A061' => array('pl-PL' => 'Testowy numer specjalny'),
+        'A062' => array('pl-PL' => '+48 123456789'),
+        'A063' => array('pl-PL' => '+48 001234567'),
+        'A064' => array('pl-PL' => 'test@test.pl'),
+        'A065' => array('pl-PL' => 'pot.gov.pl'),
+        'A066' => array('pl-PL' => 'GG:123456789'),
+        'A069' => array('pl-PL' => '100-200 zł'),
+        'A070' => array('pl-PL' => array('Dzieci', 'Rodziny', 'Seniorzy', 'Studenci')), // znizki
+        'A086' => array('pl-PL' => 'Gospodarstwa Gościnne'), // przynaleznosc do sieci,
+        'A087' => array('pl-PL' => array('Leśniczówka, kwatera myśliwska', 'Apartamenty')), // D016 multiple,
+        'A089' => array('pl-PL' => 123),
+        'A090' => array('pl-PL' => 45),
+        'A091' => array('pl-PL' => 6),
+        'A095' => array('pl-PL' => array('Internet bezpłatny', 'Internet', 'Masaż')),
+        'A096' => array('pl-PL' => 'Testowe uwagi do miejsc noclegowych', 'en-GB' => 'Accomodation notice'),
       ),
       array(
         self::$api->create_attachment(
@@ -125,6 +130,7 @@ final class RIT_WebservicesTest extends TestCase
     );
 
     $result = self::$api->add_object($object);
+
     $this->assertInstanceOf(stdClass::class, $result);
     $this->assertObjectHasAttribute('report', $result);
     if (isset($result->report)) {
@@ -133,16 +139,26 @@ final class RIT_WebservicesTest extends TestCase
         $this->assertObjectHasAttribute('identifierSZ', $result->report->reportForObject);
         if (isset($result->report->reportForObject->identifierSZ)) {
           $this->assertObjectHasAttribute('identifierType', $result->report->reportForObject->identifierSZ);
-          $this->assertEquals('I2', $result->report->reportForObject->identifierSZ->identifierType);
+          $this->assertEquals(
+            'I' . ($phpunit_test_config['dummy_source_table_name']? 2 : 1),
+            $result->report->reportForObject->identifierSZ->identifierType
+          );
           $this->assertObjectHasAttribute('artificialIdentifier', $result->report->reportForObject->identifierSZ);
-          $this->assertEquals('12345', $result->report->reportForObject->identifierSZ->artificialIdentifier);
+          $this->assertEquals(
+            $phpunit_test_config['dummy_source_object_id'],
+            $result->report->reportForObject->identifierSZ->artificialIdentifier
+          );
           $this->assertObjectHasAttribute('databaseTable', $result->report->reportForObject->identifierSZ);
-          $this->assertEquals('my_test_table', $result->report->reportForObject->identifierSZ->databaseTable);
+          $this->assertEquals(
+            $phpunit_test_config['dummy_source_table_name'],
+            $result->report->reportForObject->identifierSZ->databaseTable
+          );
         }
         $this->assertObjectHasAttribute('objectState', $result->report->reportForObject);
         $this->assertEquals('OK', $result->report->reportForObject->objectState);
       }
     }
+
     unset($result);
   }
 }
