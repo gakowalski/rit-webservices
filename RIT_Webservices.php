@@ -408,6 +408,14 @@ class RIT_Webservices
 		return $id;
 	}
 
+	/**
+	 * [encode_attachment_license description]
+	 * @param  [type] $valid_to [description]
+	 * @param  string $owner    [description]
+	 * @return [type]           [description]
+	 *
+	 * @todo Complete description
+	 */
 	public function encode_attachment_license($valid_to, $owner) {
 		$license = new \stdClass;
 		$license->validTo = $valid_to;
@@ -415,6 +423,17 @@ class RIT_Webservices
 		return $license;
 	}
 
+	/**
+	 * [create_attachment description]
+	 * @param  [type] $name        [description]
+	 * @param  [type] $type        [description]
+	 * @param  [type] $source      [description]
+	 * @param  object $license     [description]
+	 * @param  string $source_type [description]
+	 * @return [type]              [description]
+	 *
+	 * @todo Complete description
+	 */
 	public function create_attachment($name, $type, $source, $license = NULL, $source_type = 'URL') {
 		$attachment = new \stdClass;
 		$attachment->fileName = $name;
@@ -508,14 +527,18 @@ class RIT_Webservices
 	}
 
 	/**
-	 * @ignore
+	 * [add_objects description]
+	 * @param [type] $objects [description]
+	 *
+	 * @todo Make test case
+	 * @todo Complete description
 	 */
 	public function add_objects($objects) {
 		$ws	= $this->get_webservice('GiveTouristObjects');
 
 		$request = (object) array(
 			'metric'	=> $this->get_metric(),
-			'touristObject'	=> $objects, 
+			'touristObject'	=> $objects,
 		);
 
 		$result = $ws->addModifyObjects($request);
@@ -589,16 +612,38 @@ class RIT_Webservices
 		return $result;
 	}
 
+	/**
+	 * [get_metadata_last_modification_date description]
+	 * @param  string $lang Language code, see {@see get_languages()}
+	 * @return [type]       [description]
+	 *
+	 * @todo Complete description
+	 */
 	public function get_metadata_last_modification_date($lang = 'pl-PL')
 	{
 		return $this->get_metadata($lang)->lastModificationDate;
 	}
 
+	/**
+	 * [get_attributes description]
+	 * @param  string $lang Language code, see {@see get_languages()}
+	 * @return [type]       [description]
+	 *
+	 * @todo Complete description
+	 */
 	public function get_attributes($lang = 'pl-PL')
 	{
 		return $this->get_metadata($lang)->ritAttribute;
 	}
 
+	/**
+	 * [get_attribute_from description]
+	 * @param  [type] $_attributes [description]
+	 * @param  [type] $_code       [description]
+	 * @return [type]              [description]
+	 *
+	 * @todo Complete description
+	 */
 	protected function get_attribute_from($_attributes, $_code)
 	{
 		$_result = null;
@@ -611,11 +656,27 @@ class RIT_Webservices
 		return $_result;
 	}
 
+	/**
+	 * [get_attribute description]
+	 * @param  [type] $_code [description]
+	 * @param  string $_lang Language code, see {@see get_languages()}
+	 * @return [type]        [description]
+	 *
+	 * @todo Complete description
+	 */
 	public function get_attribute($_code, $_lang = 'pl-PL')
 	{
 		return $this->get_attribute_from($this->get_attributes($_lang), $_code);
 	}
 
+	/**
+	 * [is_translatable_from description]
+	 * @param  [type]  $_attributes [description]
+	 * @param  [type]  $_code       [description]
+	 * @return boolean              [description]
+	 *
+	 * @todo Complete description
+	 */
 	protected function is_translatable_from($_attributes, $_code)
 	{
 		switch ($_code) {
@@ -646,11 +707,28 @@ class RIT_Webservices
 		return false;
 	}
 
+	/**
+	 * [get_categories description]
+	 * @param  string $lang Language code, see {@see get_languages()}
+	 * @return [type]       [description]
+	 *
+	 * @todo Complete description
+	 */
 	public function get_categories($lang = 'pl-PL')
 	{
 		return $this->get_metadata($lang)->ritCategory;
 	}
 
+	/**
+	 * [get_category_from description]
+	 * @param  [type]  $_cache              [description]
+	 * @param  [type]  $_code               [description]
+	 * @param  boolean $_inherit_attributes [description]
+	 * @param  string  $_lang               Language code, see {@see get_languages()}
+	 * @return [type]                       [description]
+	 *
+	 * @todo Complete description
+	 */
 	protected function get_category_from($_cache, $_code, $_inherit_attributes = true, $_lang = 'pl-PL')
 	{
 		if ($_cache === null) {
@@ -675,16 +753,40 @@ class RIT_Webservices
 		return $_result;
 	}
 
+	/**
+	 * [get_category description]
+	 * @param  [type]  $_code               [description]
+	 * @param  boolean $_inherit_attributes [description]
+	 * @param  string  $_lang               Language code, see {@see get_languages()}
+	 * @return [type]                       [description]
+	 *
+	 * @todo Complete description
+	 */
 	public function get_category($_code, $_inherit_attributes = true, $_lang = 'pl-PL')
 	{
 		return $this->get_category_from(null, $_code, $_inherit_attributes, $_lang);
 	}
 
+	/**
+	 * [get_dictionaries description]
+	 * @param  string $lang Language code, see {@see get_languages()}
+	 * @return [type]       [description]
+	 *
+	 * @todo Complete description
+	 */
 	public function get_dictionaries($lang = 'pl-PL')
 	{
 		return $this->get_metadata($lang)->ritDictionary;
 	}
 
+	/**
+	 * [get_dictionary description]
+	 * @param  [type] $code [description]
+	 * @param  string $lang Language code, see {@see get_languages()}
+	 * @return [type]       [description]
+	 *
+	 * @todo Complete description
+	 */
 	public function get_dictionary($code, $lang = 'pl-PL')
 	{
 		$dictionaries = $this->get_dictionaries($lang);
@@ -696,6 +798,15 @@ class RIT_Webservices
 		return null;
 	}
 
+	/**
+	 * [get_dictionary_title description]
+	 * @param  [type] $code [description]
+	 * @param  string $lang Language code, see {@see get_languages()}
+	 * @return [type]       [description]
+	 *
+	 * @todo Complete description
+	 */
+
 	public function get_dictionary_title($code, $lang = 'pl-PL')
 	{
 		$dictionary = $this->get_dictionary($code, $lang);
@@ -705,6 +816,14 @@ class RIT_Webservices
 		return null;
 	}
 
+/**
+ * [get_dictionary_values description]
+ * @param  [type] $code [description]
+ * @param  string $lang Language code, see {@see get_languages()}
+ * @return [type]       [description]
+ *
+ * @todo Complete description
+ */
 	public function get_dictionary_values($code, $lang = 'pl-PL')
 	{
 		$dictionary = $this->get_dictionary($code, $lang);
@@ -748,21 +867,18 @@ class RIT_Webservices
 
 	/**
 	 * @ignore
-	 * [get_file description]
-	 * @param  [type] $file_id [description]
-	 * @return [type]          [description]
 	 */
 	public function get_file($file_id) {
 		throw new Exception("Metod not implemented.");
 	}
 
-/**
- * @param  string $date_from [description]
- * @param  string $date_to   [description]
- * @return object            Response object from webservice call
- *
- * @todo Complete description
- */
+	/**
+	 * @param  string $date_from [description]
+	 * @param  string $date_to   [description]
+	 * @return object            Response object from webservice call
+	 *
+	 * @todo Complete description
+	 */
 	public function get_events($date_from, $date_to) {
 		$ws	= $this->get_webservice('GetTouristObjectEvents');
 
