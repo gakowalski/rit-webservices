@@ -547,10 +547,33 @@ class RIT_Webservices
 	}
 
 	/**
-	 * @ignore
+	 * [delete_object description]
+	 * @param		mixed $object_id		RIT ID encoded as int or external ID encoded as object by {@see encode_object_id()} or {@see create_object_id()}
+	 * @return [type]            [description]
+	 *
+	 * @todo Make test case
+	 * @todo Complete description
 	 */
-	public function delete_object() {
-		throw new Exception("Metod not implemented.");
+	public function delete_object($object_id) {
+		$ws	= $this->get_webservice('GiveTouristObjects');
+
+		$request = new \stdClass;
+		$request->metric = (object) $this->get_metric();
+
+		if (is_object($object_id)) {
+			$request->identifierSZ = $object_id;
+			$request->identifierSZ->distributionChannel = new \stdClass;
+			$request->identifierSZ->distributionChannel->name = $this->user;
+			$request->identifierSZ->distributionChannel->code = $this->user;
+			$request->identifierSZ->lastModified = date('Y-m-dP');
+		} else {
+			$request->identifierRIT = new \stdClass;
+			$request->identifierRIT->identifierRIT = $object_id;
+		}
+
+		$result = $ws->delObject($request);
+		$this->store_trace_data($ws);
+		return $result;
 	}
 
 	/**
