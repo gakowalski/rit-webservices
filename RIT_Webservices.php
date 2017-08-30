@@ -354,9 +354,14 @@ class RIT_Webservices
  * or manually crafted as 'touristObject' subpart of the addModifyObject request
  *
  * @see create_tourist_object()
+ * @throws InvalidArgumentException
  */
 	public function add_object($object)
   {
+		if (is_array($object)) {
+			throw new InvalidArgumentException('expected single object, got array; use add_objects() to add multiple objects at once');
+		}
+
     $ws	= $this->get_webservice('GiveTouristObjects');
 
 		$request = (object) array(
@@ -527,11 +532,13 @@ class RIT_Webservices
 	}
 
 	/**
-	 * [add_objects description]
-	 * @param [type] $objects [description]
+	 * Send a package of new objects to RIT database and get transaction ID in response (to recieve import reports at later time).
 	 *
-	 * @todo Make test case
+	 * @param mixed $objects	Single object or array of tourist objects encoded using {@see create_tourist_object()}
+	 * or manually crafted as 'touristObject' subpart of the addModifyObjects request
+	 *
 	 * @todo Complete description
+	 * @todo Make test case for passing single object
 	 */
 	public function add_objects($objects) {
 		$ws	= $this->get_webservice('GiveTouristObjects');
@@ -585,12 +592,10 @@ class RIT_Webservices
 
 	/**
 	 * @param  string|int $transaction_id	Transaction ID number recieved from mass action methods
-	 * @return object                			Object to be used as ID in {@see create_tourist_object()}
+	 * @return object                			Response object containing an array of reports
 	 *
 	 * @see add_objects()
 	 * @see delete_objects()
-	 *
-	 * @todo Complete description
 	 */
 	public function get_report($transaction_id) {
 		$ws	= $this->get_webservice('GiveTouristObjects');
