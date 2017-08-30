@@ -218,6 +218,8 @@ class RIT_Webservices
  * @param  array  $where 					Search conditions encoded in array to be inserted into request object
  * @param  boolean $remote_cache	Set true to get data from cached data; false otherwise
  * @return object									Response of webservice method call
+ *
+ * @todo Make test cases
  */
 	public function get_objects($where, $remote_cache = false)
   {
