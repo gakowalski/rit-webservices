@@ -352,4 +352,10 @@ final class RIT_WebservicesTest extends TestCase
 
     unset($result);
   }
+
+  /*
+  public function test_get_all_objects() {
+    $result = self::$api->get_all_objects();
+  }
+  */
 }

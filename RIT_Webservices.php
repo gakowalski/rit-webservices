@@ -224,7 +224,7 @@ class RIT_Webservices
 	public function get_objects($where, $remote_cache = false)
   {
     if ($remote_cache === true) {
-      throw new Exception("Method not implemented.");
+      throw new Exception("Remote cache not supported at this time, sorry.");
     }
 
     $ws	= $this->get_webservice('CollectTouristObjects');
