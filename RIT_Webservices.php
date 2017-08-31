@@ -271,23 +271,50 @@ class RIT_Webservices
 	}
 
 /**
- * Recieve single object from RIT database identified by its RIT ID
- * @param  int|string $rit_id	RIT ID
- * @param  string $lang   		Language code, see {@see get_languages()}
- * @return object         		Response object from webservice
+ * Recieve single object from RIT database identified by its RIT ID or external (source) ID
+ *
+ * @param  mixed 	$object_id	RIT ID encoded as int or external ID encoded as object by {@see encode_object_id()} or {@see create_object_id()}
+ * @param  string	$lang   		Language code, see {@see get_languages()}
+ * @return object    					Response object from webservice
  */
-	public function get_object_by_id($rit_id, $lang = 'pl-PL') {
+	public function get_object_by_id($object_id, $lang = 'pl-PL') {
+		$object = new \stdClass;
+		if (is_object($object_id)) {
+			$object->identifierSZ = $object_id;
+			$object->identifierSZ->distributionChannel = new \stdClass;
+			$object->identifierSZ->distributionChannel->name = $this->user;
+			$object->identifierSZ->distributionChannel->code = $this->user;
+			$object->identifierSZ->lastModified = $last_modified;
+		} else {
+			$object->identifierRIT = new \stdClass;
+			$object->identifierRIT->identifierRIT = $object_id;
+		}
+
 		return $this->get_objects(array(
 		  'language' => $lang,
 		  'allForDistributionChannel' => 'false',
-			'objectIdentifier' => array(
-				'identifierRIT' => $rit_id,
-			),
+			'objectIdentifier' => $object,
 		), false);
 	}
 
-	public function get_objects_by_modification_date($date_from, $date_to) {
-		throw new Exception("Metod not implemented.");
+	/**
+	 * [get_objects_by_modification_date description]
+	 *
+	 * @param  [type] $date_from [description]
+	 * @param  [type] $date_to   [description]
+	 * @param  string $lang      Language code, see {@see get_languages()}
+	 * @return object            Response object from webservice
+	 */
+	public function get_objects_by_modification_date($date_from, $date_to, $lang = 'pl-PL') {
+		$range = new \stdClass;
+		$range->dateFrom = $date_from;
+		$range->dateTo = $date_to;
+
+		return $this->get_objects(array(
+		  'language' => $lang,
+		  'allForDistributionChannel' => 'false',
+			'lastModifiedRange' => $range,
+		), false);
  	}
 
 /**
