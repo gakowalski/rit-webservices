@@ -224,17 +224,22 @@ class RIT_Webservices
 	public function get_objects($where, $remote_cache = false)
   {
     if ($remote_cache === true) {
-      throw new Exception("Remote cache not supported at this time, sorry.");
-    }
-
-    $ws	= $this->get_webservice('CollectTouristObjects');
+      $ws	= $this->get_webservice('CollectTouristObjectsCache');
+    } else {
+			$ws	= $this->get_webservice('CollectTouristObjects');
+		}
 
 		$request = array(
 			'metric'	=> $this->get_metric(),
 			'searchCondition'	=> $where,
 		);
 
-		$result = $ws->searchTouristObjects($request);
+		if ($remote_cache === true) {
+      $result = $ws->searchTouristObjectsInCache($request);
+    } else {
+			$result = $ws->searchTouristObjects($request);
+		}
+
 		$this->store_trace_data($ws);
 		return $result;
 	}
@@ -257,17 +262,46 @@ class RIT_Webservices
 	}
 
 	/**
-	 * @ignore
+	 * [get_objects_by_attributes description]
+	 * @param  [type]  $attributes   [description]
+	 * @param  string  $lang         [description]
+	 * @return [type]                [description]
 	 */
-	public function get_objects_by_attributes($attributes) {
-		throw new Exception("Metod not implemented.");
+	public function get_objects_by_attributes($attributes, $lang = 'pl-PL') {
+		$searchAttributeAnd = array();
+
+		foreach ($attributes as $code => $value) {
+			$search_attribute = new \stdClass;
+			$search_attribute->attributeCode = $code;
+			$search_attribute->valueToSearch = $value;
+
+			$searchAttributeAnd[] = $search_attribute;
+		}
+
+		return $this->get_objects(array(
+		  'language' => $lang,
+		  'allForDistributionChannel' => 'false',
+			'searchAttributeAnd' => $searchAttributeAnd,
+		), false);
 	}
 
 	/**
-	 * @ignore
+	 * Recieve all objects associated with category or categories
+	 *
+	 * @param  mixed $categories	Single category code (as string) or array of category codes (strings)
+	 * @param  string	$lang   		Language code, see {@see get_languages()}
+	 * @return object    					Response object from webservice
+	 *
+	 * @todo Make test cases
 	 */
-	public function get_objects_by_categories($categories) {
-		throw new Exception("Metod not implemented.");
+	public function get_objects_by_categories($categories, $lang = 'pl-PL') {
+		return $this->get_objects(array(
+		  'language' => $lang,
+		  'allForDistributionChannel' => 'false',
+			'searchCategoryAnd' => array(
+				'categoryCode' => $categories,
+			),
+		), false);
 	}
 
 /**
@@ -304,8 +338,14 @@ class RIT_Webservices
 	 * @param  [type] $date_to   [description]
 	 * @param  string $lang      Language code, see {@see get_languages()}
 	 * @return object            Response object from webservice
+	 *
+	 * @todo Make test cases
 	 */
-	public function get_objects_by_modification_date($date_from, $date_to, $lang = 'pl-PL') {
+	public function get_objects_by_modification_date($date_from, $date_to = null, $lang = 'pl-PL', $remote_cache = false) {
+		if ($date_to === null) {
+			$date_to = date('Y-m-dP');
+		}
+
 		$range = new \stdClass;
 		$range->dateFrom = $date_from;
 		$range->dateTo = $date_to;
@@ -314,7 +354,7 @@ class RIT_Webservices
 		  'language' => $lang,
 		  'allForDistributionChannel' => 'false',
 			'lastModifiedRange' => $range,
-		), false);
+		), $remote_cache);
  	}
 
 /**
