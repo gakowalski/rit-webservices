@@ -119,9 +119,11 @@ class RIT_Webservices
 			throw new Exception("Certificate file '$cert' not found!");
 		}
 
+		ini_set("default_socket_timeout", 900);	//< introduced to fix possible bug in PHP 7.1.8 with stream context timeouts
+
 		$stream_options = array(
 			'http' => array(
-				'timeout' => 900.0,		//< overrides default_socket_timeout
+				'timeout' => 900.0,	//< should override default_socket_timeout
 			),
 			'ssl' => array(
 				'allow_self_signed'	=> true,
@@ -966,7 +968,7 @@ class RIT_Webservices
 	 * @ignore
 	 */
 	public function get_file($file_id) {
-		throw new Exception("Metod not implemented.");
+		throw new Exception("Method not implemented.");
 	}
 
 	/**
