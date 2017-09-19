@@ -259,7 +259,7 @@ class RIT_Webservices
 	public function get_all_objects($lang = 'pl-PL', $remote_cache = false) {
 		return $this->get_objects(array(
 		  'language' => $lang,
-		  'allForDistributionChannel' => 'true',
+		  'allForDistributionChannel' => true,
 		), $remote_cache);
 	}
 
@@ -282,7 +282,7 @@ class RIT_Webservices
 
 		return $this->get_objects(array(
 		  'language' => $lang,
-		  'allForDistributionChannel' => 'false',
+		  'allForDistributionChannel' => false,
 			'searchAttributeAnd' => $searchAttributeAnd,
 		), false);
 	}
@@ -299,7 +299,7 @@ class RIT_Webservices
 	public function get_objects_by_categories($categories, $lang = 'pl-PL') {
 		return $this->get_objects(array(
 		  'language' => $lang,
-		  'allForDistributionChannel' => 'false',
+		  'allForDistributionChannel' => false,
 			'searchCategoryAnd' => array(
 				'categoryCode' => $categories,
 			),
@@ -320,15 +320,13 @@ class RIT_Webservices
 			$object->identifierSZ->distributionChannel = new \stdClass;
 			$object->identifierSZ->distributionChannel->name = $this->user;
 			$object->identifierSZ->distributionChannel->code = $this->user;
-			$object->identifierSZ->lastModified = $last_modified;
 		} else {
-			$object->identifierRIT = new \stdClass;
-			$object->identifierRIT->identifierRIT = $object_id;
+			$object->identifierRIT = $object_id;
 		}
 
 		return $this->get_objects(array(
 		  'language' => $lang,
-		  'allForDistributionChannel' => 'false',
+		  'allForDistributionChannel' => false,
 			'objectIdentifier' => $object,
 		), false);
 	}
@@ -354,7 +352,7 @@ class RIT_Webservices
 
 		return $this->get_objects(array(
 		  'language' => $lang,
-		  'allForDistributionChannel' => 'false',
+		  'allForDistributionChannel' => false,
 			'lastModifiedRange' => $range,
 		), $remote_cache);
  	}
