@@ -358,4 +358,17 @@ final class RIT_WebservicesTest extends TestCase
     $result = self::$api->get_all_objects();
   }
   */
+
+ public function test_get_report() {
+   $result = self::$api->get_report('t-4fd7e1ba-278c-4376-b370-846453d43e66');
+
+   $this->assertObjectHasAttribute('status', $result);
+   if (isset($result->status)) {
+     $this->assertEquals('OK', $result->status);
+   }
+   $this->assertObjectHasAttribute('info', $result);
+   $this->assertObjectHasAttribute('report', $result);
+
+   unset($result);
+ }
 }

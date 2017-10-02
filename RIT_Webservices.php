@@ -128,11 +128,12 @@ class RIT_Webservices
 			throw new Exception("Certificate file '$cert' not found!");
 		}
 
-		ini_set("default_socket_timeout", 900);	//< introduced to fix possible bug in PHP 7.1.8 with stream context timeouts
+		/* selecting all objects in pl-PL from current state (not cached) took 994 seconds! */
+		ini_set("default_socket_timeout", 1000);	//< introduced to fix possible bug in PHP 7.1.8 with stream context timeouts
 
 		$stream_options = array(
 			'http' => array(
-				'timeout' => 900.0,	//< should override default_socket_timeout
+				'timeout' => 1000.0,	//< should override default_socket_timeout
 			),
 			'ssl' => array(
 				'allow_self_signed'	=> true,
