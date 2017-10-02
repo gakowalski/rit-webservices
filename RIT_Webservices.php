@@ -69,6 +69,15 @@ class RIT_Webservices
   protected $soap_options;
 
 	/**
+	 * Array of options for SoapClient
+	 * @var array
+	 */
+	protected $curl_options;
+
+	// TODO: description
+	protected $curl;
+
+	/**
 	 * Last XML response (only if trace parameter of {@see __construct()} is set; otherwise NULL)
 	 * @var string
 	 */
@@ -143,6 +152,21 @@ class RIT_Webservices
 			'trace'					 => $trace,
 			'compression'		 => SOAP_COMPRESSION_ACCEPT | SOAP_COMPRESSION_GZIP | SOAP_COMPRESSION_DEFLATE,
     );
+
+	  $this->curl_options = array(
+			CURLOPT_RETURNTRANSFER	=> true,
+			CURLOPT_FOLLOWLOCATION	=> true,
+			CURLOPT_SSL_VERIFYHOST	=> false,
+			CURLOPT_SSL_VERIFYPEER	=> false,
+			CURLOPT_USERAGENT				=> 'RIT_Webservices',
+			CURLOPT_VERBOSE					=> false,
+			CURLOPT_NOPROGRESS			=> true,
+			//CURLOPT_TIMEOUT					=> 900,
+			CURLOPT_SSLCERT					=> $cert,
+			CURLOPT_SSLCERTPASSWD		=> $pass,
+		);
+
+		$this->curl = false;
 	}
 
 	private function store_trace_data($soap_client_object) {
@@ -962,11 +986,31 @@ class RIT_Webservices
 		return $this->get_dictionary_values('L001', $lang);
 	}
 
-	/**
-	 * @ignore
-	 */
-	public function get_file($file_id) {
-		throw new Exception("Method not implemented.");
+	public function get_file($url) {
+		if ($this->curl === false) {
+			$this->curl = curl_init();
+
+			if ($this->curl === false) {
+				throw new Exception('Cannot init cURL!');
+			}
+		}
+
+		curl_setopt_array($this->curl,
+			array(
+				CURLOPT_URL => $url,
+				CURLOPT_POST => FALSE,
+				CURLOPT_HTTPHEADER => array()
+			)
+			+ $this->curl_options
+		);
+
+		$result = curl_exec($this->curl);
+
+		if ($result === false) {
+			throw new Exception(curl_error($this->curl));
+		}
+
+		return $result;
 	}
 
 	/**
