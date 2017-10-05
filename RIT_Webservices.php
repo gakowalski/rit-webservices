@@ -998,7 +998,7 @@ class RIT_Webservices
 
 		curl_setopt_array($this->curl,
 			array(
-				CURLOPT_URL => $url,
+				CURLOPT_URL => html_entity_decode($url),
 				CURLOPT_POST => FALSE,
 				CURLOPT_HTTPHEADER => array()
 			)
