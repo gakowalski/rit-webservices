@@ -508,32 +508,16 @@ class RIT_Webservices
 	}
 
 	/**
-	 * [encode_attachment_license description]
-	 * @param  [type] $valid_to [description]
-	 * @param  string $owner    [description]
-	 * @return [type]           [description]
-	 *
-	 * @todo Complete description
-	 */
-	public function encode_attachment_license($valid_to, $owner) {
-		$license = new \stdClass;
-		$license->validTo = $valid_to;
-		$license->distributionChannelOwner = $owner;
-		return $license;
-	}
-
-	/**
 	 * [create_attachment description]
 	 * @param  [type] $name        [description]
 	 * @param  [type] $type        [description]
 	 * @param  [type] $source      [description]
-	 * @param  object $license     [description]
 	 * @param  string $source_type [description]
 	 * @return [type]              [description]
 	 *
 	 * @todo Complete description
 	 */
-	public function create_attachment($name, $type, $source, $license = NULL, $source_type = 'URL') {
+	public function create_attachment($name, $type, $source, $source_type = 'URL') {
 		$attachment = new \stdClass;
 		$attachment->fileName = $name;
 		$attachment->fileType = $type;
@@ -550,10 +534,6 @@ class RIT_Webservices
 			case 'URL':
 			default:
 				$attachment->URL = $source;
-		}
-
-		if ($license) {
-			$attachment->certificate = $license;
 		}
 
 		return $attachment;

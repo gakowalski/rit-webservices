@@ -121,12 +121,8 @@ final class RIT_WebservicesTest extends TestCase
         self::$api->create_attachment(
           'sample-landscape-photo-licensed.jpg',
           'image/jpeg',
-          'https://unsplash.it/400/200',
-           self::$api->encode_attachment_license(
-             date('Y-m-dP', time() + 86400),  //< tommorow
-             'John Doe' //< owner
-          )
-        ),
+          'https://unsplash.it/400/200'
+        )
       )
     );
 
@@ -167,6 +163,7 @@ final class RIT_WebservicesTest extends TestCase
    * @covers RIT_Webservices::create_tourist_object
    * @covers RIT_Webservices::encode_object_id
    * @covers RIT_Webservices::add_objects
+   * @covers RIT_Webservices::get_report
    */
   public function test_add_objects() {
     global $phpunit_test_config;
@@ -352,23 +349,4 @@ final class RIT_WebservicesTest extends TestCase
 
     unset($result);
   }
-
-  /*
-  public function test_get_all_objects() {
-    $result = self::$api->get_all_objects();
-  }
-  */
-
- public function test_get_report() {
-   $result = self::$api->get_report('t-4fd7e1ba-278c-4376-b370-846453d43e66');
-
-   $this->assertObjectHasAttribute('status', $result);
-   if (isset($result->status)) {
-     $this->assertEquals('OK', $result->status);
-   }
-   $this->assertObjectHasAttribute('info', $result);
-   $this->assertObjectHasAttribute('report', $result);
-
-   unset($result);
- }
 }

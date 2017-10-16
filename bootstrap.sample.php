@@ -4,7 +4,7 @@ $phpunit_test_config = array(
   'user' => 'username',
   'pass' => 'password',
   'cert' => 'certificate.pem',
-  'instance' => 'test'
+  'instance' => 'test',
 
   /* special values used in some test cases */
   /* might be useful to manipulate them for debugging server side apps */
