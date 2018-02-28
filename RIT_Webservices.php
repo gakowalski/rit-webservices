@@ -124,7 +124,7 @@ class RIT_Webservices
 		$this->xml_response = null;
 		$this->xml_request = null;
 
-		if (file_exists($cert) === false) {
+		if (isset($this->instances[$this->instance]) && file_exists($cert) === false) {
 			throw new Exception("Certificate file '$cert' not found!");
 		}
 
@@ -147,8 +147,6 @@ class RIT_Webservices
 			'cache_wsdl' 	   => WSDL_CACHE_MEMORY,
 			'encoding' 		   => 'utf8',
       'keep_alive'     => false,
-			'local_cert' 	   => $cert,
-			'passphrase' 	   => $pass,
 			'stream_context' => $stream_context,
 			'trace'					 => $trace,
 			'compression'		 => SOAP_COMPRESSION_ACCEPT | SOAP_COMPRESSION_GZIP | SOAP_COMPRESSION_DEFLATE,
@@ -163,9 +161,17 @@ class RIT_Webservices
 			CURLOPT_VERBOSE					=> false,
 			CURLOPT_NOPROGRESS			=> true,
 			//CURLOPT_TIMEOUT					=> 900,
-			CURLOPT_SSLCERT					=> $cert,
-			CURLOPT_SSLCERTPASSWD		=> $pass,
 		);
+
+		if ($cert !== null) {
+			$this->soap_options['local_cert'] = $cert;
+			$this->curl_options[CURLOPT_SSLCERT] = $cert;
+		}
+
+		if ($pass !== null) {
+			$this->soap_options['passphrase'] = $pass;
+			$this->curl_options[CURLOPT_SSLCERTPASSWD] = $pass;
+		}
 
 		$this->curl = false;
 	}
@@ -225,7 +231,11 @@ class RIT_Webservices
  */
   public function get_webservice($method_name)
   {
-    $url = $this->instances[$this->instance] . $method_name;
+		if (isset($this->instances[$this->instance])) {
+			$url = $this->instances[$this->instance] . $method_name;
+		} else {
+			$url = $this->instance . $method_name;
+		}
     $webservice = new SoapClient("$url?wsdl", $this->soap_options);
     $webservice->__setLocation($url);
     return $webservice;
@@ -253,7 +263,11 @@ class RIT_Webservices
     if ($remote_cache === true) {
       $ws	= $this->get_webservice('CollectTouristObjectsCache');
     } else {
-			$ws	= $this->get_webservice('CollectTouristObjects');
+			if ($remote_cache === false) {
+				$ws	= $this->get_webservice('CollectTouristObjects');
+			} else {
+				$ws	= $this->get_webservice('CollectTouristObjects' . $remote_cache);
+			}
 		}
 
 		$request = array(
