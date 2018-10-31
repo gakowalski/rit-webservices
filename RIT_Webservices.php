@@ -335,14 +335,14 @@ class RIT_Webservices
 	 *
 	 * @todo Make test cases
 	 */
-	public function get_objects_by_categories($categories, $lang = 'pl-PL') {
+	public function get_objects_by_categories($categories, $lang = 'pl-PL', $remote_cache = false) {
 		return $this->get_objects(array(
 		  'language' => $lang,
 		  'allForDistributionChannel' => false,
 			'searchCategoryAnd' => array(
 				'categoryCode' => $categories,
 			),
-		), false);
+		), $remote_cache);
 	}
 
 /**
