@@ -16,7 +16,7 @@
  * At level 2 you can start with reading documentation of {@see add_object()} and tracing its helper functions to encode object identifier.
  * Then you can discover large family of wrappers for {@see get_objects()}. Then there are:
  * very important {@see get_metadata()},
- * useful {@see get_events()}
+ * useful {@see get_events(), @see get_object_languages() }
  * and some more functions are still waiting to be implemented.
  *
  * At level 3 you have everything from level 2 but some response decoding functions (at this time primarily focused on metadata) appear:
@@ -1013,6 +1013,64 @@ class RIT_Webservices
 		);
 
 		$result = $ws->getEvents($request);
+		$this->store_trace_data($ws);
+		return $result;
+	}
+
+	/**
+	 *
+	 * Example:
+	 * <code>
+	 * $webservice = new RIT_Webservices('login', 'password', 'certificate.pem', 'test');
+	 * var_dump($webservice->get_object_languages('486762'));
+	 * </code>
+	 *
+	 * Example output:
+	 * <pre>
+	 * object(stdClass)#6 (1) {
+	 *   ["language"]=>
+	 *   array(7) {
+	 *     [0]=>
+	 *     string(5) "de-DE"
+	 *     [1]=>
+	 *     string(5) "es-ES"
+	 *     [2]=>
+	 *     string(5) "fr-FR"
+	 *     [3]=>
+	 *     string(5) "it-IT"
+	 *     [4]=>
+	 *     string(5) "ru-RU"
+	 *     [5]=>
+	 *     string(5) "en-EN"
+	 *     [6]=>
+	 *     string(5) "pl-PL"
+	 *   }
+	 * }
+	 * </pre>
+	 *
+	 * @param  string $object_id RIT ID encoded as int or external ID encoded as object by {@see encode_object_id()} or {@see create_object_id()}
+	 * @return object            Response object from webservice call
+	 *
+	 * @todo Complete description
+	 */
+	public function get_object_languages($object_id) {
+		$ws	= $this->get_webservice('GetTouristObjectLanguages');
+
+		$request = new \stdClass;
+		$request->metric = (object) $this->get_metric();
+		$request->objectIdentifier = new \stdClass;
+
+		if (is_object($object_id)) {
+			$request->objectIdentifier->identifierSZ = $object_id;
+			$request->objectIdentifier->identifierSZ->distributionChannel = new \stdClass;
+			$request->objectIdentifier->identifierSZ->distributionChannel->name = $this->user;
+			$request->objectIdentifier->identifierSZ->distributionChannel->code = $this->user;
+			$request->objectIdentifier->identifierSZ->lastModified = date('Y-m-dP');
+		} else {
+			$request->objectIdentifier->identifierRIT = $object_id;
+		}
+
+		$result = $ws->getLanguages($request);
 		$this->store_trace_data($ws);
 		return $result;
 	}
