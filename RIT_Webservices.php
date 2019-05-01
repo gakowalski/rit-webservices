@@ -263,11 +263,7 @@ class RIT_Webservices
     if ($remote_cache === true) {
       $ws	= $this->get_webservice('CollectTouristObjectsCache');
     } else {
-			if ($remote_cache === false) {
-				$ws	= $this->get_webservice('CollectTouristObjects');
-			} else {
-				$ws	= $this->get_webservice('CollectTouristObjects' . $remote_cache);
-			}
+			$ws	= $this->get_webservice('CollectTouristObjects');
 		}
 
 		$request = array(
@@ -331,6 +327,7 @@ class RIT_Webservices
 	 *
 	 * @param  mixed $categories	Single category code (as string) or array of category codes (strings)
 	 * @param  string	$lang   		Language code, see {@see get_languages()}
+	 * @param  boolean $remote_cache Set true to get data from cached data; false otherwise
 	 * @return object    					Response object from webservice
 	 *
 	 * @todo Make test cases
