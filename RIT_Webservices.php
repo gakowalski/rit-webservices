@@ -124,7 +124,7 @@ class RIT_Webservices
 		$this->xml_response = null;
 		$this->xml_request = null;
 
-		if (file_exists($cert) === false) {
+		if (isset($this->instances[$this->instance]) && file_exists($cert) === false) {
 			throw new Exception("Certificate file '$cert' not found!");
 		}
 
@@ -147,8 +147,6 @@ class RIT_Webservices
 			'cache_wsdl' 	   => WSDL_CACHE_MEMORY,
 			'encoding' 		   => 'utf8',
       'keep_alive'     => false,
-			'local_cert' 	   => $cert,
-			'passphrase' 	   => $pass,
 			'stream_context' => $stream_context,
 			'trace'					 => $trace,
 			'compression'		 => SOAP_COMPRESSION_ACCEPT | SOAP_COMPRESSION_GZIP | SOAP_COMPRESSION_DEFLATE,
@@ -163,9 +161,17 @@ class RIT_Webservices
 			CURLOPT_VERBOSE					=> false,
 			CURLOPT_NOPROGRESS			=> true,
 			//CURLOPT_TIMEOUT					=> 900,
-			CURLOPT_SSLCERT					=> $cert,
-			CURLOPT_SSLCERTPASSWD		=> $pass,
 		);
+
+		if ($cert !== null) {
+			$this->soap_options['local_cert'] = $cert;
+			$this->curl_options[CURLOPT_SSLCERT] = $cert;
+		}
+
+		if ($pass !== null) {
+			$this->soap_options['passphrase'] = $pass;
+			$this->curl_options[CURLOPT_SSLCERTPASSWD] = $pass;
+		}
 
 		$this->curl = false;
 	}
@@ -225,7 +231,11 @@ class RIT_Webservices
  */
   public function get_webservice($method_name)
   {
-    $url = $this->instances[$this->instance] . $method_name;
+		if (isset($this->instances[$this->instance])) {
+			$url = $this->instances[$this->instance] . $method_name;
+		} else {
+			$url = $this->instance . $method_name;
+		}
     $webservice = new SoapClient("$url?wsdl", $this->soap_options);
     $webservice->__setLocation($url);
     return $webservice;
@@ -317,18 +327,19 @@ class RIT_Webservices
 	 *
 	 * @param  mixed $categories	Single category code (as string) or array of category codes (strings)
 	 * @param  string	$lang   		Language code, see {@see get_languages()}
+	 * @param  boolean $remote_cache Set true to get data from cached data; false otherwise
 	 * @return object    					Response object from webservice
 	 *
 	 * @todo Make test cases
 	 */
-	public function get_objects_by_categories($categories, $lang = 'pl-PL') {
+	public function get_objects_by_categories($categories, $lang = 'pl-PL', $remote_cache = false) {
 		return $this->get_objects(array(
 		  'language' => $lang,
 		  'allForDistributionChannel' => false,
 			'searchCategoryAnd' => array(
 				'categoryCode' => $categories,
 			),
-		), false);
+		), $remote_cache);
 	}
 
 /**
