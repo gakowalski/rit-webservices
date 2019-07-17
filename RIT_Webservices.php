@@ -79,13 +79,13 @@ class RIT_Webservices
 	protected $curl;
 
 	/**
-	 * Last XML response (only if trace parameter of {@see __construct()} is set; otherwise NULL)
+	 * Last XML response (only if $trace parameter of {@see __construct()} is set; otherwise NULL)
 	 * @var string
 	 */
 	public $xml_response;
 
 	/**
-	 * Last XML request (only if trace parameter of {@see __construct()} is set; otherwise NULL)
+	 * Last XML request (only if $trace parameter of {@see __construct()} is set; otherwise NULL)
 	 * @var string
 	 */
 	public $xml_request;
@@ -115,7 +115,7 @@ class RIT_Webservices
  * @param string $pass     Password
  * @param string $cert     Path and filename of certificate file (*.pem format)
  * @param string $instance RIT instance/environment name from {@see $instances}
- * @param boolean $trace   if true, store request and response XMLs to further inspection
+ * @param boolean $trace   if true, store request and response XMLs to further inspection {@see $xml_response, @see $xml_request, @see store_trace_data()}
  * @throws Exception
  */
 	public function __construct($user, $pass, $cert, $instance = 'production', $trace = false)
