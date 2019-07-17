@@ -26,7 +26,8 @@
  * {@see get_dictionary_title()},
  * {@see get_dictionary_values()},
  * {@see get_category()},
- * {@see get_categories()}.
+ * {@see get_categories()},
+ * {@see get_childless_categories()}.
  * More are underway.
  *
  * If it wasn't enough, you can always subclass RIT_Webservices and access some protected methods. There isn't many of them, but they might be useful:
@@ -847,6 +848,32 @@ class RIT_Webservices
 	public function get_categories($lang = 'pl-PL')
 	{
 		return $this->get_metadata($lang)->ritCategory;
+	}
+
+	/**
+	 * Returns array of all childless categories.
+	 *
+	 * @return array
+	 */
+	public function get_childless_categories()
+	{
+		$categories = $this->get_categories();
+
+		$all_categories = [];
+		$parent_categories = [];
+		$childless_categories = [];
+
+		foreach ($categories as $category) {
+		  if (in_array($category->code, $all_categories) === false) {
+		    $all_categories[] = $category->code;
+		  }
+		  if (isset($category->parentCode) && in_array($category->parentCode, $parent_categories) === false) {
+		    $parent_categories[] = $category->parentCode;
+		  }
+		}
+
+		$childless_categories = array_diff($all_categories, $parent_categories);
+		return $childless_categories;
 	}
 
 	/**
