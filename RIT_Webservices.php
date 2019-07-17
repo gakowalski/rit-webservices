@@ -176,7 +176,24 @@ class RIT_Webservices
 		$this->curl = false;
 	}
 
-	private function store_trace_data($soap_client_object) {
+/**
+ * Function called after successfull SoapClient communiation when 'trace' option is enabled (@see __construct()).
+ * Override it to refine your monitoring or debug capabilities.
+ *
+ * Example:
+ * <code>
+ * class RIT_Webservices_SaveToXML extends RIT_Webservices {
+ *   protected function store_trace_data($soap_client_object) {
+ *     $name = time();
+ *     file_put_contents("request_$name.xml", $soap_client_object->__getLastRequest());
+ *     file_put_contents("response_$name.xml", $soap_client_object->__getLastResponse());
+ *   }
+ * }
+ * </code>
+ *
+ * @param  object $soap_client_object SoapClient object
+ */
+	protected function store_trace_data($soap_client_object) {
 		$this->xml_response = $soap_client_object->__getLastResponse();
 		$this->xml_request = $soap_client_object->__getLastRequest();
 	}
