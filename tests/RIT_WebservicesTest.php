@@ -9,7 +9,7 @@ final class RIT_WebservicesTest extends TestCase
 {
   protected static $api;
 
-  public static function setUpBeforeClass() {
+  public static function setUpBeforeClass():void {
     global $phpunit_test_config;
 
     $user = $phpunit_test_config['user'];

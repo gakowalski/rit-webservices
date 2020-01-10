@@ -1,3 +1,5 @@
+vendor/
+.phpunit.result.cache
 bootstrap.php
 *.pem
 *.bat
