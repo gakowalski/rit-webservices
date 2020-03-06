@@ -95,8 +95,8 @@ class RIT_Webservices
 	 * @var array
 	 */
   public $instances = array(
-    'production'  => 'https://intrit.poland.travel/rit/integration/',
-    'test'        => 'https://intrittest.poland.travel/rit/integration/',
+    'production'  => 'https://maps.pot.gov.pl/rit-soap-server/',
+    'test'        => 'https://maps.pot.gov.pl/rit-soap-server/',
   );
 
 /**
