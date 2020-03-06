@@ -125,10 +125,6 @@ class RIT_Webservices
 		$this->xml_response = null;
 		$this->xml_request = null;
 
-		if (isset($this->instances[$this->instance]) && file_exists($cert) === false) {
-			throw new Exception("Certificate file '$cert' not found!");
-		}
-
 		/* selecting all objects in pl-PL from current state (not cached) took 994 seconds! */
 		ini_set("default_socket_timeout", 1000);	//< introduced to fix possible bug in PHP 7.1.8 with stream context timeouts
 
