@@ -1,0 +1,13 @@
+
+Usage:
+
+  php console_client.php --channel NAME [OPTIONS]
+
+Possible OPTIONS:
+
+  --password=PASS
+  --certificate=FILE  Filename of client certificate (*.pem)
+  --test              Connect with test environment
+  --get=TARGET        Possible targets: 'metadata', 'all' or RIT ID
+  --send=FILE         Filename with JSON encoded object
+  --language=xx-XX    Get data for language xx-XX (see codes in metadata)
